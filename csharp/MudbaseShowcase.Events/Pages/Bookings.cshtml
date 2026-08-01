@@ -1,0 +1,103 @@
+@page "/Bookings"
+@model MudbaseShowcase.Events.Pages.BookingsModel
+@{
+    ViewData["Title"] = "My bookings";
+}
+
+<h1 class="h4 fw-semibold mb-3">My bookings</h1>
+
+@if (Model.FlashError is not null)
+{
+    <p class="text-danger small" role="alert">@Model.FlashError</p>
+}
+
+@if (Model.LoadError is not null)
+{
+    <p class="text-danger">@Model.LoadError</p>
+}
+else if (Model.Items.Count == 0)
+{
+    <div class="border border-dashed rounded p-5 text-center text-muted">You have no bookings yet.</div>
+}
+else
+{
+    <div class="d-flex flex-column gap-3" style="max-width: 640px;">
+        @foreach (MudbaseShowcase.Events.Models.BookingListItemViewModel item in Model.Items)
+        {
+            string statusLabel = item.Booking.Status switch
+            {
+                MudbaseShowcase.Events.Services.BookingStatus.Confirmed => "Confirmed",
+                MudbaseShowcase.Events.Services.BookingStatus.Waitlisted => "Waitlisted",
+                MudbaseShowcase.Events.Services.BookingStatus.CheckedIn => "Checked in",
+                _ => "Cancelled",
+            };
+            string statusBadgeClass = item.Booking.Status switch
+            {
+                MudbaseShowcase.Events.Services.BookingStatus.Confirmed => "text-bg-success",
+                MudbaseShowcase.Events.Services.BookingStatus.Waitlisted => "text-bg-warning",
+                MudbaseShowcase.Events.Services.BookingStatus.CheckedIn => "text-bg-secondary",
+                _ => "border text-body",
+            };
+            bool canCancel = item.Booking.Status is MudbaseShowcase.Events.Services.BookingStatus.Confirmed
+                or MudbaseShowcase.Events.Services.BookingStatus.Waitlisted;
+            string qrContainerId = "qr-" + item.Booking.Id;
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            @if (item.Event is not null)
+                            {
+                                <a class="fw-semibold text-decoration-none" asp-page="/Events/Detail" asp-route-id="@item.Event.Id">@item.Event.Title</a>
+                                <div class="text-muted small mt-1">
+                                    <div>📅 @DisplayHelpers.FormatDateTime(item.Event.StartsAt)</div>
+                                    <div>📍 @item.Event.Location</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="fw-semibold text-muted">Event unavailable</span>
+                            }
+                        </div>
+                        <span class="badge @statusBadgeClass flex-shrink-0">@statusLabel</span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between gap-3 mt-3">
+                        @if (item.Booking.Status != MudbaseShowcase.Events.Services.BookingStatus.Cancelled)
+                        {
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="border rounded p-2 bg-white qr-code" id="@qrContainerId" data-qr-token="@item.Booking.QrToken"></div>
+                                <p class="text-muted small font-monospace mb-0" style="max-width: 16rem; word-break: break-all;">@item.Booking.QrToken</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted small mb-0">This booking was cancelled.</p>
+                        }
+
+                        @if (canCancel)
+                        {
+                            <form method="post" asp-page-handler="Cancel" class="flex-shrink-0">
+                                <input type="hidden" name="bookingId" value="@item.Booking.Id" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Cancel</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"
+            integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
+    <script>
+        document.querySelectorAll('.qr-code').forEach(function (el) {
+            var token = el.getAttribute('data-qr-token');
+            if (token) {
+                new QRCode(el, { text: token, width: 72, height: 72 });
+            }
+        });
+    </script>
+}

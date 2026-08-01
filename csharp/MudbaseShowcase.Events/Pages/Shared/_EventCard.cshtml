@@ -1,0 +1,20 @@
+@model MudbaseShowcase.Events.Models.EventListItemViewModel
+@{
+    (string badgeLabel, string badgeClass) = DisplayHelpers.CapacityBadge(Model.ConfirmedCount, Model.Event.Capacity);
+}
+
+<a href="/Events/@Model.Event.Id" class="text-decoration-none text-body">
+    <div class="card h-100 event-card">
+        <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                <h2 class="h6 mb-0">@Model.Event.Title</h2>
+                <span class="badge @badgeClass flex-shrink-0">@badgeLabel</span>
+            </div>
+            <p class="text-muted small mb-2">Hosted by @Model.Event.OrganizerName</p>
+            <div class="text-muted small d-flex flex-column gap-1">
+                <span>📅 @DisplayHelpers.FormatDateTime(Model.Event.StartsAt)</span>
+                <span>📍 @Model.Event.Location</span>
+            </div>
+        </div>
+    </div>
+</a>

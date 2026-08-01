@@ -1,0 +1,48 @@
+@page
+@model MudbaseShowcase.Events.Pages.LoginModel
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="d-flex justify-content-center">
+    <div class="w-100" style="max-width: 420px;">
+        <div class="text-center mb-4">
+            <h1 class="h4 fw-semibold">Sign in</h1>
+            <p class="text-muted small">Mudbase Events — booking &amp; ticketing with zero custom backend.</p>
+        </div>
+
+        @if (Model.ErrorMessage is not null)
+        {
+            <p class="text-danger small" role="alert">@Model.ErrorMessage</p>
+        }
+
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label">Email</label>
+                <input asp-for="Input.Email" type="email" autocomplete="email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Input.Password" class="form-label">Password</label>
+                <input asp-for="Input.Password" type="password" autocomplete="current-password" class="form-control" />
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn btn-brand w-100">Sign in</button>
+        </form>
+
+        <hr class="my-4" />
+
+        <p class="text-center small text-muted mb-2">Or sign in as a demo account</p>
+        <div class="d-flex flex-column gap-2">
+            <form method="post" asp-page-handler="QuickLogin">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <button type="submit" name="role" value="organizer" class="btn btn-outline-secondary w-100 btn-sm">Sign in as Organizer</button>
+            </form>
+            <form method="post" asp-page-handler="QuickLogin">
+                <input type="hidden" asp-for="ReturnUrl" />
+                <button type="submit" name="role" value="attendee" class="btn btn-outline-secondary w-100 btn-sm">Sign in as Attendee</button>
+            </form>
+        </div>
+    </div>
+</div>

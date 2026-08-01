@@ -1,0 +1,51 @@
+@page "/Events/{id}/CheckIn"
+@model MudbaseShowcase.Events.Pages.Events.CheckInModel
+@{
+    ViewData["Title"] = "Check in";
+}
+
+<div class="d-flex justify-content-center">
+    <div class="w-100" style="max-width: 480px;">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="h5 fw-semibold">Check in — @Model.Event?.Title</h1>
+                <p class="text-muted small">Paste or type the guest's scanned QR code to check them in.</p>
+
+                @if (Model.ErrorMessage is not null)
+                {
+                    <p class="text-danger small" role="alert">@Model.ErrorMessage</p>
+                }
+
+                <form method="post" class="d-flex align-items-end gap-2 mt-3">
+                    <div class="flex-grow-1">
+                        <label asp-for="QrToken" class="form-label">Scanned / pasted code</label>
+                        <input asp-for="QrToken" autofocus class="form-control" placeholder="e.g. 9f2c1a4b…" />
+                        <span asp-validation-for="QrToken" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-brand">Check in</button>
+                </form>
+
+                @if (Model.Result is not null)
+                {
+                    string? guestName = Model.Result.Booking?.UserName;
+                    (string tone, string message) = Model.Result.Outcome switch
+                    {
+                        MudbaseShowcase.Events.Models.CheckInOutcome.CheckedIn =>
+                            ("text-success", $"{guestName ?? "Guest"} is checked in."),
+                        MudbaseShowcase.Events.Models.CheckInOutcome.AlreadyCheckedIn =>
+                            ("text-warning", $"{guestName ?? "This guest"} was already checked in."),
+                        MudbaseShowcase.Events.Models.CheckInOutcome.Waitlisted =>
+                            ("text-warning", $"{guestName ?? "This guest"} is on the waitlist, not confirmed — cannot check in."),
+                        MudbaseShowcase.Events.Models.CheckInOutcome.Cancelled =>
+                            ("text-danger", $"{guestName ?? "This booking"} was cancelled."),
+                        _ => ("text-danger", "No booking found for this code at this event."),
+                    };
+
+                    <div class="d-flex align-items-center gap-2 rounded border bg-body-tertiary p-3 mt-3 small @tone">
+                        <span>@message</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+:root {
+    --brand: #2563eb;
+    --brand-dark: #1d4ed8;
+}
+
+body {
+    background-color: #f8fafc;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.btn-brand {
+    background-color: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+
+.btn-brand:hover,
+.btn-brand:focus {
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
+    color: #fff;
+}
+
+.btn-brand:disabled {
+    background-color: var(--brand);
+    border-color: var(--brand);
+    opacity: 0.5;
+}
+
+.event-card {
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.event-card:hover {
+    border-color: var(--brand);
+    box-shadow: 0 1px 6px rgba(37, 99, 235, 0.12);
+}
+
+.kanban-timestamp {
+    font-size: 0.75rem;
+}
+
+details > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+    display: none;
+}

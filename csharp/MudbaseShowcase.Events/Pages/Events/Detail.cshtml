@@ -1,0 +1,89 @@
+@page "/Events/{id}"
+@model MudbaseShowcase.Events.Pages.Events.DetailModel
+@{
+    ViewData["Title"] = Model.Event?.Title ?? "Event";
+}
+
+@if (Model.LoadError is not null)
+{
+    <p class="text-danger">@Model.LoadError</p>
+}
+else if (Model.EventNotFound)
+{
+    <p class="text-muted text-center py-5">Event not found.</p>
+}
+else
+{
+    MudbaseShowcase.Events.Models.EventDocument evt = Model.Event!;
+    (string badgeLabel, string badgeClass) = DisplayHelpers.CapacityBadge(Model.ConfirmedCount, evt.Capacity);
+
+    <div class="mx-auto" style="max-width: 640px;">
+        @if (Model.FlashMessage is not null)
+        {
+            <p class="text-success small" role="status">@Model.FlashMessage</p>
+        }
+        @if (Model.FlashError is not null)
+        {
+            <p class="text-danger small" role="alert">@Model.FlashError</p>
+        }
+
+        <div class="d-flex align-items-start justify-content-between gap-3">
+            <h1 class="h4 fw-semibold mb-0">@evt.Title</h1>
+            <span class="badge @badgeClass flex-shrink-0">@badgeLabel</span>
+        </div>
+        <p class="text-muted small mt-1">Hosted by @evt.OrganizerName</p>
+
+        <div class="text-muted small d-flex flex-column gap-1 mt-2">
+            <span>📅 @DisplayHelpers.FormatDateTime(evt.StartsAt)</span>
+            <span>📍 @evt.Location</span>
+            <span>👥 Capacity: @evt.Capacity</span>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(evt.Description))
+        {
+            <p class="mt-3" style="white-space: pre-wrap;">@evt.Description</p>
+        }
+
+        <div class="mt-3">
+            @if (Model.IsOwner)
+            {
+                <div class="d-flex flex-wrap align-items-center gap-2 rounded border bg-body-tertiary p-3">
+                    <span class="me-1 text-uppercase text-muted small fw-semibold">Organizer</span>
+                    <a class="btn btn-outline-secondary btn-sm" asp-page="/Events/Edit" asp-route-id="@evt.Id">✎ Edit</a>
+                    <a class="btn btn-outline-secondary btn-sm" asp-page="/Events/CheckIn" asp-route-id="@evt.Id">▦ Check-in</a>
+                    <form method="post" asp-page-handler="Delete" onsubmit="return confirm('Delete this event permanently?');" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">🗑 Delete</button>
+                    </form>
+                </div>
+            }
+            else if (Model.CanBook)
+            {
+                <form method="post" asp-page-handler="Book">
+                    <button type="submit" class="btn btn-brand">Book this event</button>
+                </form>
+            }
+            else if (Model.MyBooking is not null)
+            {
+                string statusLabel = Model.MyBooking.Status switch
+                {
+                    MudbaseShowcase.Events.Services.BookingStatus.Confirmed => "You're booked",
+                    MudbaseShowcase.Events.Services.BookingStatus.Waitlisted => "You're on the waitlist",
+                    MudbaseShowcase.Events.Services.BookingStatus.CheckedIn => "You're checked in",
+                    _ => "Booking cancelled",
+                };
+                string statusBadgeClass = Model.MyBooking.Status == MudbaseShowcase.Events.Services.BookingStatus.Waitlisted
+                    ? "text-bg-warning"
+                    : "text-bg-success";
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge @statusBadgeClass">@statusLabel</span>
+                    <a class="btn btn-outline-secondary btn-sm" asp-page="/Bookings">View my bookings</a>
+                </div>
+            }
+        </div>
+
+        <hr class="my-4" />
+
+        <partial name="Shared/_ActivityFeed" model="Model.ActivityEntries" />
+    </div>
+}
