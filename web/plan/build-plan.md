@@ -181,22 +181,26 @@ input for a pasted/typed `qrToken`. On submit: `GET bookings?filter={eventId,qrT
 - Secrets: none — every env var is `NEXT_PUBLIC_*`; there is no server-side credential anywhere in
   this app.
 
-## Note on a Transient Write-Rejection During Initial Smoke Testing (2026-08-01)
+## Note on a Real Platform Bug Found During Smoke Testing (2026-08-01)
 
 An early smoke-testing pass hit a run of `403 "Cannot set protected role fields"` responses on
 every `bookings` create/update that included a `status` value, reproduced consistently enough
-(across both roles, several values, and a parallel probe against `events`) to initially look like
-a permanent, collection-agnostic platform guard on that field name, and was written up as such.
+(across both roles, several values, and a parallel probe against `events`) to write up as a
+permanent, collection-agnostic platform guard on that field name.
 
-That read was wrong. The project owner reproduced a plain `status`-bearing create immediately
-afterward and got a clean `201`, and pointed out that a Fly machine restart (new machine IDs,
-redeployed image) landed at roughly the same time — consistent with the 403s being a transient
-side effect of that restart window rather than a deliberate rejection. Re-running the exact same
-requests moments later, with no code or request changes, succeeded cleanly and repeatably (see
-"Live Smoke Test Results" below for the full re-verified flow). The earlier write-up has been
-removed; this note stands in its place as a record of what happened and why the original
-conclusion didn't hold up, per this project's convention of documenting real findings rather than
-silently editing them away.
+That finding was **correct** — it was a real bug, not a fluke. `middleware/enforceServerRoleAssignment.js`
+and `middleware/fieldProtection.js` blanket-blocked any field literally named `status` on every
+project data collection, for any caller whose `user.role` wasn't `owner`/`admin`. An initial
+re-check here used an org-owner-scoped token, which bypasses that exact check (`isAdmin` short-circuits
+the block) and so appeared to contradict the original finding — that re-check's conclusion (attributing
+it to a transient Fly restart) was itself wrong; testing with a privileged token isn't a valid way to
+verify behavior an ordinary end-user role hits. The sibling `mudbase-showcase-marketplace` build hit the
+identical bug independently, root-caused it correctly, and shipped a narrow fix (`mudbase-server` commit
+`251db188`) that removes only `status` from the blanket block while every genuinely sensitive field
+(`role`, `permissions`, `isAdmin`, etc.) stays protected — deployed to `cloud.mudbase.dev` before this
+app's final live smoke test ran, which is why the exact same requests started succeeding with no app-side
+changes. See "Live Smoke Test Results" below for the full flow, now genuinely passing against the fixed
+platform.
 
 ## Known Limitations / Design Decisions
 
