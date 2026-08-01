@@ -82,9 +82,19 @@ query-sanitizer requirement.
 | Read activity log | yes | yes |
 | Write activity | yes (via booking/check-in actions) | yes (via booking actions on own bookings) |
 
-Server-side enforcement is the actual security boundary (Mudbase collection permissions); the
-app's own `organizerId === user.id` / `userId === user.id` checks are UX gating so the right people
-see the right buttons, matching the pattern established in the social/ecommerce showcases.
+Server-side enforcement is the actual security boundary — but this required a fix. Mudbase
+collection permissions support row-level scoping via a `conditions` field (e.g. `{"userId":"$userId"}`),
+documented in `mudbase-backend/docs/ROLE_ELEVATION_COLLECTION_PERMISSIONS.md`, but this project's
+`attendee` role was initially provisioned with a flat `update` grant on `bookings` (no condition) —
+meaning, until corrected, any attendee's JWT could PATCH another attendee's booking directly via the
+REST API, with only this app's own `userId === user.id` checks (UX gating, not enforced) standing in
+the way. Found via raw-JWT testing during the Java port's live verification, root-caused (not a
+platform bug — a project misconfiguration, same class of mistake as this session's earlier Kanban
+`boardId` lesson), and fixed 2026-08-01 by setting `conditions: {"userId": "$userId"}` on the
+`bookings` collection's `attendee` permission via `PATCH /api/projects/{projectId}/multi-role/roles/attendee/collections/{bookingsCollectionId}/permissions`.
+Server-side enforcement (`validateDataOwnership` in `middleware/collectionPermissions.js`) is now the
+real boundary; the app's own equality checks remain in place as UX gating, matching the pattern
+established in the social/ecommerce showcases.
 
 ## Auth Flow
 
@@ -173,8 +183,10 @@ input for a pasted/typed `qrToken`. On submit: `GET bookings?filter={eventId,qrT
   react-hook-form + `@hookform/resolvers/zod`.
 - Authentication: Mudbase-issued JWT (access + refresh), stored in `localStorage` via
   `MudbaseClient`, 401 → refresh → retry handled once and deduped across concurrent requests.
-- Authorization: enforced server-side by Mudbase's per-collection role permissions; this app's own
-  `organizerId`/`userId` equality checks are UX gating, not the security boundary.
+- Authorization: enforced server-side by Mudbase's per-collection role permissions, scoped with a
+  row-level `conditions: {"userId": "$userId"}` grant on the `bookings` collection's `attendee`
+  permission (see "RBAC" above for the misconfiguration this corrected); this app's own
+  `organizerId`/`userId` equality checks remain UX gating on top of that real boundary.
 - Every `...Id` field used in a query filter is a real Mudbase ObjectId (session user id or a
   fetched document's `_id`) — never a literal/placeholder string — satisfying the platform's
   query-sanitizer requirement and avoiding its security-alerting path.
