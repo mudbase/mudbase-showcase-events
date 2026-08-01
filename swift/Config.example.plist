@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- A project/collection ID is not a secret — see README "Configuration". -->
+	<key>MudbaseProjectId</key>
+	<string></string>
+	<key>MudbaseBaseURL</key>
+	<string>https://cloud.mudbase.dev</string>
+	<key>EventsCollectionId</key>
+	<string></string>
+	<key>BookingsCollectionId</key>
+	<string></string>
+	<key>ActivityCollectionId</key>
+	<string></string>
+</dict>
+</plist>
