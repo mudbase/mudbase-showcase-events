@@ -1,0 +1,45 @@
+<div class="board-header">
+  <div>
+    <h1 class="page-title">Events</h1>
+    <p class="page-subtitle">Upcoming events, soonest first.</p>
+  </div>
+  <% if organizer? %>
+    <a href="/events/new" class="btn">New event</a>
+  <% end %>
+</div>
+
+<% if @events.empty? %>
+  <div class="empty-state">
+    <p>No events yet.<% if organizer? %> <a href="/events/new">Create the first one</a>.<% end %></p>
+  </div>
+<% else %>
+  <div class="event-list">
+    <% @events.each do |event| %>
+      <% confirmed = @confirmed_counts[event[:_id]] || 0 %>
+      <% css_class, label = capacity_badge(confirmed, event[:capacity]) %>
+      <a href="/events/<%= h(event[:_id]) %>" class="event-card">
+        <div class="event-card-header">
+          <h2 class="event-card-title"><%= h(event[:title]) %></h2>
+          <span class="badge <%= css_class %>"><%= h(label) %></span>
+        </div>
+        <p class="event-card-meta"><%= format_datetime(event[:startsAt]) %> · <%= h(event[:location]) %></p>
+        <p class="event-card-organizer">Hosted by <%= h(event[:organizerName]) %></p>
+      </a>
+    <% end %>
+  </div>
+
+  <% pagination = @pagination || {} %>
+  <% page = (pagination[:page] || 1).to_i %>
+  <% total_pages = (pagination[:totalPages] || 1).to_i %>
+  <% if total_pages > 1 %>
+    <div class="pagination">
+      <% if page > 1 %>
+        <a href="/?page=<%= page - 1 %>" class="btn btn-outline btn-sm">Previous</a>
+      <% end %>
+      <span class="page-indicator">Page <%= page %> of <%= total_pages %></span>
+      <% if pagination[:hasMore] %>
+        <a href="/?page=<%= page + 1 %>" class="btn btn-outline btn-sm">Next</a>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

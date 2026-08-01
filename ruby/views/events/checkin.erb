@@ -1,0 +1,29 @@
+<div style="max-width:28rem;">
+  <h1 class="page-title">Check in — <%= h(@event[:title]) %></h1>
+  <p class="page-subtitle">Paste or type the guest's QR check-in code.</p>
+
+  <% if @result %>
+    <% case @result[:outcome]
+       when :checked_in %>
+      <p class="flash flash-notice" role="status">Checked in <%= h(@result[:booking][:userName]) %>.</p>
+    <% when :already_checked_in %>
+      <p class="flash flash-notice" role="status"><%= h(@result[:booking][:userName]) %> is already checked in.</p>
+    <% when :cancelled %>
+      <p class="flash flash-error" role="alert">This booking was cancelled.</p>
+    <% when :waitlisted %>
+      <p class="flash flash-error" role="alert">This booking is waitlisted, not confirmed - it can't be checked in yet.</p>
+    <% when :not_found %>
+      <p class="flash flash-error" role="alert">No booking found for that code.</p>
+    <% end %>
+  <% end %>
+
+  <form action="/events/<%= h(@event[:_id]) %>/checkin" method="post" class="stack" novalidate>
+    <div class="field">
+      <label for="qr_token">QR check-in code</label>
+      <input type="text" id="qr_token" name="qr_token" value="<%= h(@qr_token_value) %>" autofocus required>
+    </div>
+    <button type="submit" class="btn btn-block">Check in</button>
+  </form>
+
+  <p style="margin-top:1.5rem;"><a href="/events/<%= h(@event[:_id]) %>">Back to event</a></p>
+</div>

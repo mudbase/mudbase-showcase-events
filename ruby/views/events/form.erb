@@ -1,0 +1,30 @@
+<div style="max-width:32rem;">
+  <h1 class="page-title"><%= h(@form_title) %></h1>
+
+  <form action="<%= h(@form_action) %>" method="post" class="stack" novalidate>
+    <div class="field">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" maxlength="200" value="<%= h(@event[:title]) %>" required>
+    </div>
+    <div class="field">
+      <label for="description">Description (optional)</label>
+      <textarea id="description" name="description" rows="4" maxlength="2000"><%= h(@event[:description]) %></textarea>
+    </div>
+    <div class="field">
+      <label for="starts_at">Date &amp; time</label>
+      <input type="datetime-local" id="starts_at" name="starts_at" value="<%= h(@event[:starts_at]) %>" required>
+    </div>
+    <div class="field">
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" maxlength="200" value="<%= h(@event[:location]) %>" required>
+    </div>
+    <div class="field">
+      <label for="capacity">Capacity</label>
+      <input type="number" id="capacity" name="capacity" min="1" step="1" value="<%= h(@event[:capacity]) %>" required>
+    </div>
+    <div style="display:flex; gap:0.75rem;">
+      <button type="submit" class="btn">Save event</button>
+      <a href="/" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>

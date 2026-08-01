@@ -1,0 +1,29 @@
+source "https://rubygems.org"
+
+ruby ">= 3.1"
+
+gem "sinatra", "~> 4.1"
+gem "sinatra-contrib", "~> 4.1"
+gem "rack-session", "~> 2.1"
+gem "puma", "~> 6.4"
+gem "dotenv", "~> 3.1"
+
+# The real Mudbase Ruby SDK (generated via OpenAPI Generator, gem name `mudbase_sdk`,
+# module `MudbaseSDK`). Published at https://github.com/mudbase/mudbase-sdk under the
+# `ruby/` subdirectory of that repo, NOT on the public RubyGems registry - Bundler's
+# `glob:` option resolves the gemspec inside that subdirectory directly from the git
+# checkout it makes under the hood, no sibling clone required. Same gem the sibling
+# `mudbase-showcase-kanban`/`mudbase-showcase-social`/`mudbase-showcase-ecommerce` ports use.
+gem "mudbase_sdk", git: "https://github.com/mudbase/mudbase-sdk.git", glob: "ruby/*.gemspec"
+
+# mudbase_sdk depends on typhoeus -> ethon -> ffi for its HTTP transport. ffi's native
+# extension is loosely pinned by the SDK's own gemspec and can fail to compile against a
+# newer Xcode/Clang toolchain than the gem version expects - pin it explicitly rather
+# than patching the vendored gemspec. See README "Known limitations" for the exact
+# error this avoids and what to do if it still occurs on your machine.
+gem "ffi", "~> 1.17"
+
+# Server-side QR code rendering for the check-in flow (see plan/build-plan.md "QR codes").
+# Pure-Ruby, no native extension - renders each booking's `qrToken` as an inline SVG on
+# `/bookings`, the only client-visible artifact a scanner needs, with zero client-side JS.
+gem "rqrcode", "~> 3.0"

@@ -1,0 +1,29 @@
+<div style="max-width:26rem; margin:0 auto;">
+  <h1 class="page-title" style="text-align:center;">Sign in</h1>
+  <p class="page-subtitle" style="text-align:center;">Organizers manage events and check guests in; attendees browse and book.</p>
+
+  <form action="/login" method="post" class="stack" novalidate>
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" autocomplete="email" value="<%= h(@email) %>" required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="btn btn-block">Sign in</button>
+  </form>
+
+  <p style="text-align:center; margin-top:1.5rem; color:var(--muted); font-size:0.85rem;">
+    Quick demo sign-in (no retyping credentials):
+  </p>
+  <div class="demo-accounts">
+    <% @demo_accounts.each do |account| %>
+      <form action="/login" method="post" class="inline-form">
+        <input type="hidden" name="email" value="<%= h(account[:email]) %>">
+        <input type="hidden" name="password" value="<%= h(account[:password]) %>">
+        <button type="submit" class="btn btn-outline btn-sm">Sign in as <%= h(account[:label]) %></button>
+      </form>
+    <% end %>
+  </div>
+</div>

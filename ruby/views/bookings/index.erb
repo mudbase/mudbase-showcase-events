@@ -1,0 +1,42 @@
+<h1 class="page-title">My bookings</h1>
+<p class="page-subtitle">Every event you've booked, newest first.</p>
+
+<% if @bookings.empty? %>
+  <div class="empty-state">
+    <p>No bookings yet. <a href="/">Browse events</a>.</p>
+  </div>
+<% else %>
+  <div class="booking-list">
+    <% @bookings.each do |booking| %>
+      <% event = @events_by_id[booking[:eventId]] %>
+      <div class="booking-card">
+        <div class="booking-card-main">
+          <h2 class="booking-card-title">
+            <% if event %>
+              <a href="/events/<%= h(event[:_id]) %>"><%= h(event[:title]) %></a>
+            <% else %>
+              (event no longer available)
+            <% end %>
+          </h2>
+          <% if event %>
+            <p class="booking-card-meta"><%= format_datetime(event[:startsAt]) %> · <%= h(event[:location]) %></p>
+          <% end %>
+          <p><span class="status-pill <%= booking_status_class(booking[:status]) %>"><%= booking_status_label(booking[:status]) %></span></p>
+
+          <% if %w[confirmed waitlisted].include?(booking[:status]) %>
+            <form action="/bookings/<%= h(booking[:_id]) %>/cancel" method="post" class="inline-form">
+              <button type="submit" class="btn btn-outline btn-sm">Cancel booking</button>
+            </form>
+          <% end %>
+        </div>
+
+        <% if %w[confirmed waitlisted checked_in].include?(booking[:status]) %>
+          <div class="booking-qr">
+            <%= qr_svg(booking[:qrToken]) %>
+            <p class="field-hint">Show this at check-in.</p>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

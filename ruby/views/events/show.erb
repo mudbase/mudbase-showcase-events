@@ -1,0 +1,69 @@
+<div style="max-width:40rem;">
+  <div class="board-header">
+    <div>
+      <h1 class="page-title"><%= h(@event[:title]) %></h1>
+      <p class="page-subtitle">Hosted by <%= h(@event[:organizerName]) %></p>
+    </div>
+    <% css_class, label = capacity_badge(@confirmed, @event[:capacity]) %>
+    <span class="badge <%= css_class %>"><%= h(label) %></span>
+  </div>
+
+  <ul class="event-detail-meta">
+    <li><%= format_datetime(@event[:startsAt]) %></li>
+    <li><%= h(@event[:location]) %></li>
+    <li>Capacity: <%= @event[:capacity] %></li>
+  </ul>
+
+  <% if @event[:description] && !@event[:description].to_s.empty? %>
+    <p class="event-detail-description"><%= h(@event[:description]) %></p>
+  <% end %>
+
+  <div class="booking-panel">
+    <% if @is_owner %>
+      <p class="readonly-notice">This is your event - organizers don't book their own events.</p>
+    <% elsif @my_booking && @my_booking[:status] != "cancelled" %>
+      <p>
+        Your booking: <span class="status-pill <%= booking_status_class(@my_booking[:status]) %>"><%= booking_status_label(@my_booking[:status]) %></span>
+      </p>
+      <% if %w[confirmed waitlisted].include?(@my_booking[:status]) %>
+        <form action="/bookings/<%= h(@my_booking[:_id]) %>/cancel" method="post" class="inline-form">
+          <button type="submit" class="btn btn-outline btn-sm">Cancel booking</button>
+        </form>
+      <% end %>
+      <p class="field-hint">See your ticket QR code on <a href="/bookings">My bookings</a>.</p>
+    <% else %>
+      <form action="/events/<%= h(@event[:_id]) %>/book" method="post" class="inline-form">
+        <button type="submit" class="btn">Book this event</button>
+      </form>
+    <% end %>
+  </div>
+
+  <% if @is_owner %>
+    <div class="organizer-actions">
+      <a href="/events/<%= h(@event[:_id]) %>/edit" class="btn btn-outline btn-sm">Edit</a>
+      <a href="/events/<%= h(@event[:_id]) %>/checkin" class="btn btn-outline btn-sm">Check in guests</a>
+      <form action="/events/<%= h(@event[:_id]) %>/delete" method="post" class="inline-form">
+        <button type="submit" class="btn btn-danger btn-sm">Delete event</button>
+      </form>
+    </div>
+  <% end %>
+
+  <hr class="divider">
+
+  <h2 class="section-title">Activity</h2>
+  <% if @activity.empty? %>
+    <p class="field-hint">No activity yet.</p>
+  <% else %>
+    <ul class="activity-list">
+      <% @activity.each do |entry| %>
+        <li class="activity-item">
+          <span class="activity-dot"></span>
+          <div>
+            <p class="activity-text"><%= activity_text(entry) %></p>
+            <p class="activity-time"><%= format_relative(entry[:createdAt]) %></p>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
