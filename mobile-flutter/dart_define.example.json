@@ -1,0 +1,7 @@
+{
+  "MUDBASE_BASE_URL": "https://cloud.mudbase.dev",
+  "MUDBASE_PROJECT_ID": "6a6d3fa9d07caabbbdfc564f",
+  "EVENTS_COLLECTION_ID": "6a6d3fcad07caabbbdfc5802",
+  "BOOKINGS_COLLECTION_ID": "6a6d3fcbd07caabbbdfc5819",
+  "ACTIVITY_COLLECTION_ID": "6a6d3fccd07caabbbdfc582e"
+}
