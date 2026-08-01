@@ -1,0 +1,27 @@
+{
+    "name": "mudbase/showcase-events-php",
+    "description": "Mudbase Events — PHP reimplementation of the Mudbase showcase events booking/ticketing app. Plain PHP, no framework, backed entirely by the real Mudbase PHP SDK.",
+    "type": "project",
+    "license": "unlicense",
+    "require": {
+        "php": "^8.1",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "mudbase/sdk": "*"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../mudbase-sdk/php"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
