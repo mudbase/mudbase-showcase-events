@@ -1,0 +1,41 @@
+{{define "content"}}
+<div class="page-header">
+  <h1>{{.Event.Title}}</h1>
+  {{if .IsOrganizerOfEvent}}
+  <div class="header-actions">
+    <a href="/events/{{.Event.ID}}/edit" class="button button-outline button-sm">Edit</a>
+    <a href="/events/{{.Event.ID}}/checkin" class="button button-outline button-sm">Check-in</a>
+    <form method="post" action="/events/{{.Event.ID}}/delete" class="inline-form" onsubmit="return confirm('Delete this event?');">
+      <button type="submit" class="button button-outline button-sm button-danger">Delete</button>
+    </form>
+  </div>
+  {{end}}
+</div>
+
+<div class="detail-grid">
+  <div class="detail-main">
+    {{if .Event.Description}}<p class="event-description">{{.Event.Description}}</p>{{end}}
+
+    <dl class="detail-facts">
+      <div><dt>When</dt><dd>{{.StartsAtLabel}}</dd></div>
+      <div><dt>Where</dt><dd>{{.Event.Location}}</dd></div>
+      <div><dt>Organizer</dt><dd>{{.Event.OrganizerName}}</dd></div>
+      <div><dt>Capacity</dt><dd class="capacity-badge {{if .IsFull}}capacity-badge-full{{end}}">{{.CapacityLabel}} confirmed</dd></div>
+    </dl>
+
+    {{if .CanBook}}
+    <form method="post" action="/events/{{.Event.ID}}/book">
+      <button type="submit" class="button">{{if .IsFull}}Join waitlist{{else}}Book this event{{end}}</button>
+    </form>
+    {{else if .MyBooking}}
+    <div class="booking-status-card">
+      <p>Your booking: <span class="status-badge status-badge-{{.MyBooking.StatusClass}}">{{.MyBooking.StatusLabel}}</span></p>
+      <a href="/bookings" class="button button-outline button-sm">View your ticket</a>
+    </div>
+    {{end}}
+
+    <h2>Activity</h2>
+    {{template "activity_feed" .Activity}}
+  </div>
+</div>
+{{end}}

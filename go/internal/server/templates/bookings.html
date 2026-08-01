@@ -1,0 +1,11 @@
+{{define "content"}}
+<h1>My bookings</h1>
+
+{{if not .Bookings}}
+<div class="empty-state"><p>You have no bookings yet. <a href="/">Browse events</a> to book one.</p></div>
+{{else}}
+<div class="booking-grid">
+  {{range .Bookings}}{{template "booking_card" .}}{{end}}
+</div>
+{{end}}
+{{end}}

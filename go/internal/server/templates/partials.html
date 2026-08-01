@@ -1,0 +1,84 @@
+{{/* event_card renders one EventCardView on the list page. */}}
+{{define "event_card"}}
+<a class="event-card" href="/events/{{.ID}}">
+  <div class="event-card-head">
+    <h2 class="event-card-title">{{.Title}}</h2>
+    {{if .IsOwnEvent}}<span class="pill pill-own">Yours</span>{{end}}
+  </div>
+  <p class="event-card-meta">{{.StartsAtLabel}}</p>
+  <p class="event-card-meta">{{.Location}}</p>
+  <p class="capacity-badge {{if .IsFull}}capacity-badge-full{{end}}">{{.CapacityLabel}} confirmed</p>
+</a>
+{{end}}
+
+{{/* event_form_fields renders the shared create/edit event form body. Used by event_new.html and
+     event_edit.html - one definition shared by both so they can never drift out of sync. */}}
+{{define "event_form_fields"}}
+<form method="post" class="stacked" action="{{if .IsEdit}}/events/{{.Event.ID}}/edit{{else}}/events/new{{end}}">
+  <div class="field">
+    <label for="title">Title</label>
+    <input id="title" type="text" name="title" maxlength="200" value="{{.Event.Title}}" required>
+  </div>
+  <div class="field">
+    <label for="description">Description (optional)</label>
+    <textarea id="description" name="description" rows="4" maxlength="2000">{{.Event.Description}}</textarea>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label for="startsAt">Date &amp; time</label>
+      <input id="startsAt" type="datetime-local" name="startsAt" value="{{.StartsAtLocal}}" required>
+    </div>
+    <div class="field">
+      <label for="capacity">Capacity</label>
+      <input id="capacity" type="number" name="capacity" min="1" step="1" value="{{if .IsEdit}}{{.Event.Capacity}}{{else}}20{{end}}" required>
+    </div>
+  </div>
+  <div class="field">
+    <label for="location">Location</label>
+    <input id="location" type="text" name="location" maxlength="200" value="{{.Event.Location}}" required>
+  </div>
+  <button type="submit" class="button">{{if .IsEdit}}Save changes{{else}}Create event{{end}}</button>
+</form>
+{{end}}
+
+{{/* activity_feed renders a []ActivityItemView, reverse-chronological. */}}
+{{define "activity_feed"}}
+{{if not .}}
+<div class="empty-state"><p>No activity yet.</p></div>
+{{else}}
+<ul class="activity-list">
+  {{range .}}
+  <li class="activity-item">
+    <span class="activity-text">{{.Text}}</span>
+    <span class="muted activity-timestamp">{{.CreatedLabel}}</span>
+  </li>
+  {{end}}
+</ul>
+{{end}}
+{{end}}
+
+{{/* booking_card renders one BookingView on the /bookings page, including its scannable QR check-in
+     ticket. */}}
+{{define "booking_card"}}
+<div class="booking-card">
+  <div class="booking-card-head">
+    <h2 class="booking-card-title">{{.EventTitle}}</h2>
+    <span class="status-badge status-badge-{{.StatusClass}}">{{.StatusLabel}}</span>
+  </div>
+  <p class="event-card-meta">{{.EventStartsAtLabel}}</p>
+  <p class="event-card-meta">{{.EventLocation}}</p>
+
+  {{if .QRDataURI}}
+  <div class="qr-wrap">
+    <img src="{{.QRDataURI}}" alt="Check-in QR code" width="140" height="140">
+    <p class="qr-token muted">{{.QRToken}}</p>
+  </div>
+  {{end}}
+
+  {{if .CanCancel}}
+  <form method="post" action="/bookings/{{.ID}}/cancel" class="inline-form" onsubmit="return confirm('Cancel this booking?');">
+    <button type="submit" class="button button-outline button-sm">Cancel booking</button>
+  </form>
+  {{end}}
+</div>
+{{end}}

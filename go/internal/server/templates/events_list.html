@@ -1,0 +1,22 @@
+{{define "content"}}
+<div class="page-header">
+  <h1>Events</h1>
+  {{if .CanManageEvents}}<a href="/events/new" class="button button-sm">+ New event</a>{{end}}
+</div>
+
+{{if not .Events}}
+<div class="empty-state"><p>No events yet.</p></div>
+{{else}}
+<div class="event-grid">
+  {{range .Events}}{{template "event_card" .}}{{end}}
+</div>
+{{end}}
+
+{{if or .HasPrev .HasNext}}
+<div class="pager">
+  {{if .HasPrev}}<a class="button button-outline button-sm" href="/?page={{sub .Page 1}}">&larr; Previous</a>{{end}}
+  <span class="muted">Page {{.Page}} of {{.TotalPages}}</span>
+  {{if .HasNext}}<a class="button button-outline button-sm" href="/?page={{add .Page 1}}">Next &rarr;</a>{{end}}
+</div>
+{{end}}
+{{end}}

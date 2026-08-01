@@ -1,0 +1,36 @@
+{{define "content"}}
+<div class="login-card">
+  <h1>Create account</h1>
+
+  <form method="post" action="/register" class="stacked">
+    <div class="field">
+      <label for="role">I am an&hellip;</label>
+      <select id="role" name="role" required>
+        <option value="attendee">Attendee</option>
+        <option value="organizer">Organizer</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="firstName">First name</label>
+        <input id="firstName" type="text" name="firstName" maxlength="80" required>
+      </div>
+      <div class="field">
+        <label for="lastName">Last name</label>
+        <input id="lastName" type="text" name="lastName" maxlength="80" required>
+      </div>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" autocomplete="new-password" minlength="8" required>
+    </div>
+    <button type="submit" class="button">Create account</button>
+  </form>
+
+  <p class="muted signup-note">Already have an account? <a href="/login">Sign in</a>.</p>
+</div>
+{{end}}

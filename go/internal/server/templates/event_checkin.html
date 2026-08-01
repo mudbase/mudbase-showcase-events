@@ -1,0 +1,22 @@
+{{define "content"}}
+<h1>Check in — {{.Event.Title}}</h1>
+<p class="muted">Paste or type the attendee's check-in code from their ticket QR.</p>
+
+{{if .Result}}
+<p class="flash {{if .Result.IsSuccess}}flash-success{{else}}flash-error{{end}}" role="{{if .Result.IsSuccess}}status{{else}}alert{{end}}">
+  {{.Result.Message}}
+</p>
+{{end}}
+
+<div class="form-card">
+  <form method="post" action="/events/{{.Event.ID}}/checkin" class="stacked">
+    <div class="field">
+      <label for="qrToken">Check-in code</label>
+      <input id="qrToken" type="text" name="qrToken" autocomplete="off" autofocus placeholder="Paste the qrToken here" required>
+    </div>
+    <button type="submit" class="button">Check in</button>
+  </form>
+</div>
+
+<p><a href="/events/{{.Event.ID}}">&larr; Back to event</a></p>
+{{end}}
