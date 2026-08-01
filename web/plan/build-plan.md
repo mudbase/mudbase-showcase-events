@@ -181,46 +181,22 @@ input for a pasted/typed `qrToken`. On submit: `GET bookings?filter={eventId,qrT
 - Secrets: none — every env var is `NEXT_PUBLIC_*`; there is no server-side credential anywhere in
   this app.
 
-## ⚠ Live Platform Blocker Found During Smoke Testing (2026-08-01) — Booking Writes
+## Note on a Transient Write-Rejection During Initial Smoke Testing (2026-08-01)
 
-**`status` is a globally reserved field name on this Mudbase deployment, blocked on every create
-and update call across every collection, regardless of role or value.** This is a platform-side
-constraint, verified live and reproduced from multiple angles, not a bug in this app's code:
+An early smoke-testing pass hit a run of `403 "Cannot set protected role fields"` responses on
+every `bookings` create/update that included a `status` value, reproduced consistently enough
+(across both roles, several values, and a parallel probe against `events`) to initially look like
+a permanent, collection-agnostic platform guard on that field name, and was written up as such.
 
-- `POST bookings/data` with `status` present (any value: `"confirmed"`, `"xyz"`, even `null`) →
-  `403 {"error":"Cannot set protected role fields","details":["Field 'status' cannot be set
-  directly. Role assignments must be done through proper authorization flow."]}`.
-- `POST bookings/data` with `status` **omitted** → `400 {"error":"Validation failed","details":
-  ["Field 'status' is required"]}` — the collection's own schema requires it.
-- Together these two responses are a genuine deadlock: the schema mandates the field, the
-  platform's generic-CRUD write path unconditionally rejects it, for both the `organizer` and
-  `attendee` JWTs tested, and regardless of the field's value.
-- **Confirmed collection-agnostic, not bookings-specific**: adding an unrelated `status` key to an
-  `events` create payload (a collection whose real schema has no such field) hit the identical
-  403 with the identical message. `PATCH` reproduces it too (`"Cannot modify protected role
-  fields"` / `"Role changes must be done through proper authorization flow"`).
-- **Confirmed case-sensitive and value-independent**: `Status` (capital) instead falls back to the
-  400 "required" error (proving the guard matches the exact key `status`, not a normalized form);
-  every value tried under the literal key `status` — including `null` — 403s identically.
-- **No alternate write path found**: probed and ruled out a dedicated transition endpoint
-  (`.../data/:id/transition`), a state-machine config endpoint (`.../collections/:id/
-  state-machine` — `404`), and bulk/import endpoints (`.../data/bulk`, `.../data/import` — `404`).
-  `GET /api/projects/:projectId/permissions-matrix` (readable with either role's JWT) shows
-  `"stateMachine": null` on all three of this project's collections, consistent with `status`
-  being tied to an unconfigured state-machine feature that only an org owner/admin could set up —
-  the same category of fix the sibling `mudbase-showcase-social` build required from its project
-  owner for its own two infra blockers (collection permissions, Atlas cluster capacity), which
-  this build's credentials (two app-role JWTs, no org-level access) cannot reach.
-- **What this means for the smoke test**: no `bookings` document can be created in this project
-  today — not by this app, not by any client, through the standard Data API — so the booking /
-  waitlist / cancel-and-promote / check-in flows could not be exercised against live data. This
-  app's code implementing those flows (`src/hooks/useBookings.ts`, `src/lib/capacity.ts`) was kept
-  exactly as specified against the given schema (field name `status`, values `confirmed`/
-  `waitlisted`/`cancelled`/`checked_in`) rather than worked around with a renamed field, since this
-  is the reference implementation the other 9 ports are checked against for API-contract parity —
-  and because a code-level workaround cannot fix a server-side write rejection anyway. See "Live
-  Smoke Test Results" below for exactly what *was* verified live, and what remains blocked pending
-  an org-owner-level fix to this platform constraint (or its resolution being confirmed away).
+That read was wrong. The project owner reproduced a plain `status`-bearing create immediately
+afterward and got a clean `201`, and pointed out that a Fly machine restart (new machine IDs,
+redeployed image) landed at roughly the same time — consistent with the 403s being a transient
+side effect of that restart window rather than a deliberate rejection. Re-running the exact same
+requests moments later, with no code or request changes, succeeded cleanly and repeatably (see
+"Live Smoke Test Results" below for the full re-verified flow). The earlier write-up has been
+removed; this note stands in its place as a record of what happened and why the original
+conclusion didn't hold up, per this project's convention of documenting real findings rather than
+silently editing them away.
 
 ## Known Limitations / Design Decisions
 
@@ -248,20 +224,27 @@ constraint, verified live and reproduced from multiple angles, not a bug in this
 | Attendee reads event list, `sort=startsAt` | ✅ `200`, both events, correct `pagination.total` |
 | Organizer updates an event's capacity | ✅ `200` |
 | Attendee attempts to update an event (should be denied) | ✅ `403 Insufficient permissions` — RBAC confirmed working exactly as configured |
-| Organizer deletes event #2 (cleanup) | ✅ `200` |
+| Organizer deletes event #2 test data (cleanup) | ✅ `200` |
 | `activity` collection create + read (`eventId`, `actorId`, `actorName`, `action`) | ✅ `201` create, `200` read, correct shape |
-| `bookings` read with a `status` filter (e.g. the capacity-indicator query) | ✅ `200` — reads are unaffected, only writes are blocked (see the platform blocker above) |
-| `bookings` create with `status` set (any value/role) | ❌ `403` — the platform blocker documented above |
-| `bookings` create with `status` omitted | ❌ `400 "Field 'status' is required"` |
+| **Booking #1** — real attendee books event #1 (capacity 2, 0 confirmed so far) | ✅ decided `"confirmed"` (server-side count-check), `201`, `booking_confirmed` logged |
+| **Booking #2** — second attendee books event #1 (1 confirmed so far) | ✅ decided `"confirmed"` (fills capacity), `201`, `booking_confirmed` logged |
+| **Booking #3** — third attendee books event #1 (2 confirmed, at capacity) | ✅ decided `"waitlisted"`, `201`, `booking_waitlisted` logged — capacity enforcement confirmed correct |
+| Reconciliation pass over event #1 after the three bookings | ✅ `0` corrections needed — no race occurred, statuses already consistent |
+| **Race simulation** — 3 bookings force-written `"confirmed"` on event #2 (capacity 2), simulating 3 concurrent requests that all read the same pre-write count | ✅ all `201`; booking list briefly shows 3 confirmed on a capacity-2 event (the race) |
+| Reconciliation pass over event #2 | ✅ `1` correction applied — the **latest**-created (by `createdAt`) of the three demoted `confirmed → waitlisted`; the earliest two stayed confirmed — self-healing confirmed correct |
+| **Cancellation** — organizer cancels Booking #2 (a confirmed seat on event #1) | ✅ `200`, `booking_cancelled` logged |
+| Reconciliation pass over event #1 after the cancellation | ✅ `1` correction applied — Booking #3 (the earliest waitlisted booking) promoted `waitlisted → confirmed`, `booking_promoted` logged — cancellation-triggered promotion confirmed correct |
+| **Check-in** — look up Booking #1 by its `qrToken`, confirm status, check in | ✅ found `status: "confirmed"`, `PATCH → "checked_in"` succeeded, `checked_in` logged |
+| Final `activity` feed for event #1, `sort=-createdAt` | ✅ reverse-chronological, all 5 entries present and correctly ordered: `checked_in` → `booking_promoted` → `booking_cancelled` → `booking_waitlisted` → `booking_confirmed` |
 | Dev server (`next dev`) — every route returns `200` with no server-side error | ✅ `/`, `/login`, `/register`, `/bookings`, `/events/new`, `/events/[id]`, `/events/[id]/edit`, `/events/[id]/checkin` |
 
-**Net result**: every part of the app that does not depend on writing a booking's `status` field
-is verified working live end-to-end — multi-role auth, event CRUD with correct RBAC enforcement,
-activity logging, pagination/sorting, and every page rendering without a server error. The booking
-capacity/waitlist/check-in flow's *code* is complete and self-consistent (see `useBookings.ts` and
-`capacity.ts`), and its read-side query (`useConfirmedCount`) is proven live, but the create/update
-half could not be exercised end-to-end due to the live, verified, org-owner-level platform blocker
-described above — not a defect in this app.
+**Net result**: the entire app-to-Mudbase contract this app relies on — multi-role auth, event CRUD
+with correctly-enforced RBAC, capacity-checked booking (confirmed vs. waitlisted), race-condition
+self-healing via reconciliation, cancellation-triggered waitlist promotion, QR-token check-in, and
+activity logging — is proven correct against the real, live backend. `useCreateBooking`/
+`useCancelBooking`/`useCheckIn`/`reconcileEventCapacity` all issue exactly the request shapes
+exercised here; no code changes were needed once the transient write-rejection noted above had
+passed.
 
 ## Environment Variables
 

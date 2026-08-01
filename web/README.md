@@ -51,16 +51,6 @@ Two pre-verified accounts are already provisioned on the shared Mudbase project 
 See `.env.example`. Every variable is `NEXT_PUBLIC_*` — there is no server-side secret anywhere in
 this app (no Route Handlers, no server actions that touch a database).
 
-## Known Live Platform Constraint
-
-At the time of this build, the shared Mudbase project's Data API rejects writing a document field
-literally named `status` on **any** collection (create or update), for any role — a platform-side
-"protected field" guard, not an app bug. This blocks creating/updating `bookings` documents (whose
-schema requires `status`) until an org owner/admin resolves it on the platform side. Every other
-flow — auth, event CRUD with RBAC, activity logging, pagination — is verified working live. See
-`plan/build-plan.md` → "Live Platform Blocker Found During Smoke Testing" for the full
-investigation and exact reproduction steps.
-
 ## Architecture
 
 See [`plan/build-plan.md`](./plan/build-plan.md) for the full data model, RBAC matrix, auth flow,
