@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ "Edit event" if event else "New event" }}{% endblock %}
+{% block content %}
+  <div class="form-shell">
+    <div class="card">
+      <div class="card-body">
+        <h1>{{ "Edit event" if event else "New event" }}</h1>
+        <p class="muted text-sm" style="margin-bottom: 1.25rem;">
+          {% if event %}Changes to capacity are re-checked against existing bookings.
+          {% else %}Set a capacity — bookings beyond it are automatically waitlisted.{% endif %}
+        </p>
+
+        {% if form_error %}<div class="form-error" role="alert">{{ form_error }}</div>{% endif %}
+
+        <form method="post" action="{{ ('/events/' ~ event.id ~ '/edit') if event else '/events' }}" novalidate>
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" maxlength="200" value="{{ event.title if event else '' }}" required />
+            {% if errors.title %}<p class="field-error">{{ errors.title }}</p>{% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" maxlength="2000" rows="4">{{ event.description if event and event.description else '' }}</textarea>
+            {% if errors.description %}<p class="field-error">{{ errors.description }}</p>{% endif %}
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="starts_at">Date &amp; time</label>
+              <input type="datetime-local" id="starts_at" name="starts_at" value="{{ starts_at_value or '' }}" required />
+              {% if errors.starts_at %}<p class="field-error">{{ errors.starts_at }}</p>{% endif %}
+            </div>
+            <div class="form-group">
+              <label for="capacity">Capacity</label>
+              <input type="number" id="capacity" name="capacity" min="1" step="1" value="{{ event.capacity if event else 20 }}" required />
+              {% if errors.capacity %}<p class="field-error">{{ errors.capacity }}</p>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" maxlength="200" value="{{ event.location if event else '' }}" required />
+            {% if errors.location %}<p class="field-error">{{ errors.location }}</p>{% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">{{ "Save changes" if event else "Create event" }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

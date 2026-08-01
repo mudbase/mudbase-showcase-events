@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+  <div class="auth-shell">
+    <div class="card">
+      <div class="card-body">
+        <h1 style="text-align:center;">Sign in</h1>
+        <p class="muted text-sm" style="text-align:center; margin-bottom: 1.25rem;">
+          Events, bookings, and check-in are all gated behind your organizer or attendee account.
+        </p>
+
+        <div class="demo-accounts">
+          {% for account in demo_accounts %}
+            <form method="post" action="/login" class="inline-form demo-account-form">
+              <input type="hidden" name="email" value="{{ account.email }}" />
+              <input type="hidden" name="password" value="{{ demo_password }}" />
+              {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+              <button type="submit" class="btn btn-outline btn-sm btn-block">Sign in as {{ account.role }}</button>
+            </form>
+          {% endfor %}
+        </div>
+
+        <div class="sep-row">
+          <hr class="sep" />
+          <span class="sep-label">or sign in manually</span>
+        </div>
+
+        {% if form_error %}<div class="form-error" role="alert">{{ form_error }}</div>{% endif %}
+
+        <form method="post" action="/login" novalidate>
+          {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email" placeholder="events.organizer.demo@gmail.com" required />
+            {% if errors.email %}<p class="field-error">{{ errors.email }}</p>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required />
+            {% if errors.password %}<p class="field-error">{{ errors.password }}</p>{% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+        </form>
+
+        <p class="auth-footer">Don't have an account? <a href="/register">Create one</a></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

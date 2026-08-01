@@ -1,0 +1,13 @@
+<a class="event-card" href="/events/{{ event.id }}">
+  <div class="event-card-head">
+    <div>
+      <h2>{{ event.title }}</h2>
+      <p class="event-card-host">Hosted by {{ event.organizer_name }}</p>
+    </div>
+    <span class="badge {{ confirmed | badge_class(event.capacity) }}">{{ confirmed | badge_label(event.capacity) }}</span>
+  </div>
+  <div class="event-card-meta">
+    <div>&#128197; {{ event.starts_at | date }}</div>
+    <div>&#128205; {{ event.location }}</div>
+  </div>
+</a>

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Check in{% endblock %}
+{% block content %}
+  <div class="form-shell">
+    <div class="card">
+      <div class="card-body">
+        <h1>Check in &mdash; {{ event.title }}</h1>
+        <p class="muted text-sm" style="margin-bottom: 1.25rem;">Paste or type the guest's scanned QR code to check them in.</p>
+
+        <form method="post" action="/events/{{ event.id }}/checkin" class="checkin-form">
+          <div class="form-group" style="flex:1; margin-bottom:0;">
+            <label for="qr_token">Scanned / pasted code</label>
+            <input type="text" id="qr_token" name="qr_token" autofocus placeholder="e.g. 9f2c1a4b..." required />
+          </div>
+          <button type="submit" class="btn btn-primary">Check in</button>
+        </form>
+
+        {% if result_message %}
+          <div class="checkin-result checkin-result-{{ result_category }}">
+            {{ result_message }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

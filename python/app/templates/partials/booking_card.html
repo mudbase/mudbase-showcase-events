@@ -1,0 +1,39 @@
+{% set event = events_by_id.get(booking.event_id) %}
+<div class="card booking-card">
+  <div class="card-body">
+    <div class="booking-card-head">
+      <div>
+        <h2>{% if event %}<a href="/events/{{ event.id }}">{{ event.title }}</a>{% else %}Event unavailable{% endif %}</h2>
+        {% if event %}
+          <div class="event-card-meta">
+            <div>&#128197; {{ event.starts_at | date }}</div>
+            <div>&#128205; {{ event.location }}</div>
+          </div>
+        {% endif %}
+      </div>
+      <span class="badge {{ 'badge-success' if booking.status == 'confirmed' else 'badge-warning' if booking.status == 'waitlisted' else 'badge-neutral' if booking.status == 'checked_in' else 'badge-outline' }}">
+        {% if booking.status == "confirmed" %}Confirmed
+        {% elif booking.status == "waitlisted" %}Waitlisted
+        {% elif booking.status == "checked_in" %}Checked in
+        {% else %}Cancelled{% endif %}
+      </span>
+    </div>
+
+    <div class="booking-card-footer">
+      {% if booking.status != "cancelled" %}
+        <div class="qr-card">
+          <img src="{{ booking.qr_token | qr }}" alt="QR check-in code" width="72" height="72" />
+          <p class="qr-token-text">{{ booking.qr_token }}</p>
+        </div>
+      {% else %}
+        <p class="muted text-sm">This booking was cancelled.</p>
+      {% endif %}
+
+      {% if booking.status in ("confirmed", "waitlisted") %}
+        <form method="post" action="/bookings/{{ booking.id }}/cancel" class="inline-form">
+          <button type="submit" class="btn btn-outline btn-sm">Cancel</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>

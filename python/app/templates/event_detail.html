@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title if event else "Event" }}{% endblock %}
+{% block content %}
+  {% if not event %}
+    <p class="error-state">{{ load_error or "Event not found." }}</p>
+  {% else %}
+    <div class="event-detail">
+      <div class="event-detail-head">
+        <h1>{{ event.title }}</h1>
+        <span class="badge {{ confirmed_count | badge_class(event.capacity) }}">{{ confirmed_count | badge_label(event.capacity) }}</span>
+      </div>
+      <p class="muted text-sm">Hosted by {{ event.organizer_name }}</p>
+
+      <div class="event-detail-meta">
+        <div>&#128197; {{ event.starts_at | date }}</div>
+        <div>&#128205; {{ event.location }}</div>
+        <div>&#128101; Capacity: {{ event.capacity }}</div>
+      </div>
+
+      {% if event.description %}<p class="event-detail-desc">{{ event.description }}</p>{% endif %}
+
+      {% if load_error %}<p class="error-state">{{ load_error }}</p>{% endif %}
+
+      {% if is_owner %}
+        <div class="organizer-actions">
+          <span class="organizer-actions-label">Organizer</span>
+          <a class="btn btn-outline btn-sm" href="/events/{{ event.id }}/edit">Edit</a>
+          <a class="btn btn-outline btn-sm" href="/events/{{ event.id }}/checkin">Check-in</a>
+          <details class="inline-edit">
+            <summary class="btn btn-danger-outline btn-sm">Delete</summary>
+            <form method="post" action="/events/{{ event.id }}/delete" class="inline-edit-form" style="align-items:center;">
+              <span class="text-sm muted">Delete this event permanently?</span>
+              <button type="submit" class="btn btn-danger-outline btn-xs">Confirm delete</button>
+            </form>
+          </details>
+        </div>
+      {% else %}
+        {% if my_booking and my_booking.status != "cancelled" %}
+          <div class="booking-status-row">
+            <span class="badge {{ 'badge-warning' if my_booking.status == 'waitlisted' else 'badge-success' }}">
+              {% if my_booking.status == "confirmed" %}You're booked
+              {% elif my_booking.status == "waitlisted" %}You're on the waitlist
+              {% elif my_booking.status == "checked_in" %}You're checked in
+              {% endif %}
+            </span>
+            <a class="btn btn-outline btn-sm" href="/bookings">View my bookings</a>
+          </div>
+        {% else %}
+          <form method="post" action="/events/{{ event.id }}/book">
+            <button type="submit" class="btn btn-primary">Book this event</button>
+          </form>
+        {% endif %}
+      {% endif %}
+
+      <hr class="sep" style="margin: 1.5rem 0;" />
+
+      <div class="activity-section">
+        <h2 class="activity-heading">Activity</h2>
+        {% if not activity %}
+          <p class="muted text-sm">No activity yet.</p>
+        {% else %}
+          <div class="activity-list">
+            {% for entry in activity %}
+              {% include "partials/activity_item.html" with context %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

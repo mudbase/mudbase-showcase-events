@@ -1,0 +1,10 @@
+<div class="activity-item">
+  <span class="avatar avatar-sm">{{ entry.actor_name | initial }}</span>
+  <div class="activity-body">
+    <p class="activity-text">
+      <strong>{{ entry.actor_name }}</strong>
+      {{ activity_labels.get(entry.action, entry.action) }}
+    </p>
+    <span class="activity-time">{{ entry.created_at | relative_time }}</span>
+  </div>
+</div>

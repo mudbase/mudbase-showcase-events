@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}My bookings{% endblock %}
+{% block content %}
+  <div class="section-head">
+    <h1>My bookings</h1>
+  </div>
+
+  {% if load_error %}
+    <p class="error-state">{{ load_error }}</p>
+  {% elif not bookings %}
+    <div class="empty-state">You haven't booked any events yet.</div>
+  {% else %}
+    <div class="booking-list">
+      {% for booking in bookings %}
+        {% include "partials/booking_card.html" with context %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

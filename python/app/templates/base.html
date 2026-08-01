@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Events{% endblock %} · Mudbase Events (Python)</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="/">Mudbase Events</a>
+      <nav class="nav">
+        {% if current_user %}
+          <a class="nav-link" href="/">Events</a>
+          <a class="nav-link" href="/bookings">My bookings</a>
+          {% if is_organizer %}
+            <a class="nav-link" href="/events/new">New event</a>
+          {% endif %}
+          <span class="role-badge">{{ role_label }}</span>
+          <form method="post" action="/logout" class="inline-form">
+            <button type="submit" class="btn btn-outline btn-sm">Sign out</button>
+          </form>
+        {% else %}
+          <a class="btn btn-outline btn-sm" href="/login">Sign in</a>
+          <a class="btn btn-primary btn-sm" href="/register">Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% if flash %}
+    <div class="container">
+      <div class="flash flash-{{ flash.category }}" role="status">{{ flash.message }}</div>
+    </div>
+  {% endif %}
+
+  <main class="site-main">
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      Built on <a href="https://www.mudbase.dev" target="_blank" rel="noreferrer">Mudbase</a> — Python / FastAPI
+      reimplementation of the reference Events booking/ticketing app.
+    </div>
+  </footer>
+</body>
+</html>

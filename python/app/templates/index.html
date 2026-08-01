@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Upcoming events{% endblock %}
+{% block content %}
+  {% if events is none %}
+    <div class="signin-prompt">
+      <h1>Sign in to see upcoming events</h1>
+      <p class="muted text-sm">Events, bookings, and check-in are all gated behind your organizer or attendee account.</p>
+      <div class="signin-prompt-actions">
+        <a class="btn btn-primary" href="/login">Sign in</a>
+        <a class="btn btn-outline" href="/register">Create an account</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="section-head" style="flex-direction: column; align-items: flex-start; gap: 0.35rem;">
+      <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+        <div>
+          <h1>Upcoming events</h1>
+          <p class="muted text-sm" style="margin:0;">Sorted soonest first.</p>
+        </div>
+        {% if is_organizer %}
+          <a class="btn btn-primary" href="/events/new">New event</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if load_error %}
+      <p class="error-state">{{ load_error }}</p>
+    {% elif not events %}
+      <div class="empty-state">No events yet.{% if is_organizer %} Create one above to get started.{% endif %}</div>
+    {% else %}
+      <div class="event-list">
+        {% for event, confirmed in events %}
+          {% include "partials/event_card.html" %}
+        {% endfor %}
+      </div>
+
+      {% if pagination %}
+        <div class="pagination-row">
+          {% if page > 1 %}
+            <a class="btn btn-outline btn-sm" href="/?page={{ page - 1 }}">&larr; Newer</a>
+          {% else %}
+            <span></span>
+          {% endif %}
+          <span class="muted text-sm">Page {{ page }} of {{ pagination.total_pages }} &middot; {{ pagination.total }} events</span>
+          {% if pagination.has_more %}
+            <a class="btn btn-outline btn-sm" href="/?page={{ page + 1 }}">Later &rarr;</a>
+          {% else %}
+            <span></span>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+{% endblock %}
