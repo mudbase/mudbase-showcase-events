@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Event not found — Events</title>
+  <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<main class="container" style="max-width:520px">
+  <h1 class="page-title">Event not found</h1>
+  <p class="alert alert-notice" th:text="${errorMessage}">This event is no longer available.</p>
+  <a th:href="@{/}" class="btn btn-outline">Back to events</a>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

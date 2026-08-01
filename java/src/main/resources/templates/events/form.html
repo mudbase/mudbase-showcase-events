@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${formTitle} + ' — Events'">Event — Events</title>
+  <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<main class="container">
+  <div class="form-card">
+    <h1 class="page-title" th:text="${formTitle}">New event</h1>
+    <p class="lede" th:text="${formSubtitle}">Subtitle</p>
+
+    <p th:if="${formError}" class="alert alert-error" th:text="${formError}">Error</p>
+
+    <form method="post" th:action="@{${formAction}}" th:object="${eventFormRequest}" novalidate>
+      <div class="field">
+        <label for="event-title">Title</label>
+        <input id="event-title" type="text" th:field="*{title}" maxlength="200" />
+        <p class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Error</p>
+      </div>
+
+      <div class="field">
+        <label for="event-description">Description</label>
+        <textarea id="event-description" rows="4" th:field="*{description}" maxlength="2000"></textarea>
+        <p class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Error</p>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="event-startsAt">Date &amp; time</label>
+          <input id="event-startsAt" type="datetime-local" th:field="*{startsAt}" />
+          <p class="error" th:if="${#fields.hasErrors('startsAt')}" th:errors="*{startsAt}">Error</p>
+        </div>
+        <div class="field">
+          <label for="event-capacity">Capacity</label>
+          <input id="event-capacity" type="number" min="1" step="1" th:field="*{capacity}" />
+          <p class="error" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}">Error</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="event-location">Location</label>
+        <input id="event-location" type="text" th:field="*{location}" maxlength="200" />
+        <p class="error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}">Error</p>
+      </div>
+
+      <button type="submit" class="btn btn-accent btn-block" th:text="${submitLabel}">Save</button>
+    </form>
+  </div>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

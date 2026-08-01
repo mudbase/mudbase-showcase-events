@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="'Check in — ' + ${event.title}">Check in — Events</title>
+  <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<main class="container">
+  <a th:href="@{'/events/' + ${event.id}}" class="back-link">← Back to event</a>
+
+  <div class="form-card">
+    <h1 class="page-title" th:text="'Check in — ' + ${event.title}">Check in</h1>
+    <p class="lede">Paste or type the guest's scanned QR code to check them in.</p>
+
+    <form method="post" th:action="@{'/events/' + ${event.id} + '/checkin'}" th:object="${checkInRequest}" class="btn-row" style="align-items:flex-start" novalidate>
+      <div class="field" style="flex:1;margin-bottom:0">
+        <label for="qrToken">Scanned / pasted code</label>
+        <input id="qrToken" type="text" th:field="*{qrToken}" autofocus placeholder="e.g. 9f2c1a4b…" />
+        <p class="error" th:if="${#fields.hasErrors('qrToken')}" th:errors="*{qrToken}">Error</p>
+      </div>
+      <button type="submit" class="btn btn-accent" style="margin-top:26px">Check in</button>
+    </form>
+
+    <div class="checkin-result checkin-result-success" th:if="${checkInOutcome == 'CHECKED_IN'}">
+      ✅ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'Guest')} + ' is checked in.'">Guest is checked in.</span>
+    </div>
+    <div class="checkin-result checkin-result-warning" th:if="${checkInOutcome == 'ALREADY_CHECKED_IN'}">
+      ⚠️ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'This guest')} + ' was already checked in.'">Already checked in.</span>
+    </div>
+    <div class="checkin-result checkin-result-warning" th:if="${checkInOutcome == 'WAITLISTED'}">
+      ⚠️ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'This guest')} + ' is on the waitlist, not confirmed — cannot check in.'">Waitlisted.</span>
+    </div>
+    <div class="checkin-result checkin-result-error" th:if="${checkInOutcome == 'CANCELLED'}">
+      ✕ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'This booking')} + ' was cancelled.'">Cancelled.</span>
+    </div>
+    <div class="checkin-result checkin-result-error" th:if="${checkInOutcome == 'NOT_FOUND'}">
+      ✕ No booking found for this code at this event.
+    </div>
+  </div>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

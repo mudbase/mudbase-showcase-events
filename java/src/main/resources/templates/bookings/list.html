@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>My bookings — Events</title>
+  <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<main class="container" style="max-width:640px">
+  <h1 class="page-title">My bookings</h1>
+
+  <div th:if="${!rows.isEmpty()}">
+    <div class="booking-card" th:each="row : ${rows}">
+      <div class="booking-card-header">
+        <div>
+          <p style="margin:0;font-weight:600">
+            <a th:if="${row.event != null}" th:href="@{'/events/' + ${row.event.id}}" th:text="${row.event.title}">Event title</a>
+            <span th:if="${row.event == null}">Event unavailable</span>
+          </p>
+          <p class="muted" style="margin:4px 0 0;font-size:0.85rem" th:if="${row.event != null}">
+            📅 <span th:text="${row.event.formattedStartsAt}">Date</span> · 📍 <span th:text="${row.event.location}">Location</span>
+          </p>
+        </div>
+        <span
+          class="badge"
+          th:classappend="${row.booking.status == 'confirmed'} ? 'badge-success' : (${row.booking.status == 'waitlisted'} ? 'badge-warning' : (${row.booking.status == 'checked_in'} ? 'badge-secondary' : 'badge-outline'))"
+          th:text="${row.booking.statusLabel}">
+          Status
+        </span>
+      </div>
+
+      <div class="booking-ticket" th:if="${row.qrImageDataUri != null}">
+        <img th:src="${row.qrImageDataUri}" width="72" height="72" alt="Booking QR code" />
+        <p class="qr-token" th:text="${row.booking.qrToken}">token</p>
+      </div>
+      <p class="muted" th:if="${row.qrImageDataUri == null}">This booking was cancelled.</p>
+
+      <form
+        method="post"
+        th:if="${row.booking.status == 'confirmed' or row.booking.status == 'waitlisted'}"
+        th:action="@{'/bookings/' + ${row.booking.id} + '/cancel'}"
+        style="margin-top:12px"
+      >
+        <button type="submit" class="btn btn-outline btn-sm">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <p class="empty-state" th:if="${rows.isEmpty()}">You haven't booked any events yet.</p>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

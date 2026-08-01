@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Events</title>
+  <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<main class="container">
+  <div class="page-heading">
+    <h1 class="page-title">Upcoming events</h1>
+    <a th:if="${isOrganizer}" th:href="@{/events/new}" class="btn btn-accent btn-sm">New event</a>
+  </div>
+
+  <div class="event-list" th:if="${!rows.isEmpty()}">
+    <a class="event-card" th:each="row : ${rows}" th:href="@{'/events/' + ${row.event.id}}">
+      <div>
+        <p class="event-card-title" th:text="${row.event.title}">Event title</p>
+        <p class="event-card-meta">
+          <span th:text="${row.event.formattedStartsAt}">Date</span>
+          <span>·</span>
+          <span th:text="${row.event.location}">Location</span>
+          <span>·</span>
+          <span>Hosted by <span th:text="${row.event.organizerName}">Organizer</span></span>
+        </p>
+      </div>
+      <span class="badge" th:classappend="${row.badgeVariant}" th:text="${row.badgeLabel}">0/0 booked</span>
+    </a>
+  </div>
+
+  <p class="empty-state" th:if="${rows.isEmpty()}">No events yet<span th:if="${isOrganizer}"> — create the first one.</span></p>
+
+  <div class="pagination" th:if="${!rows.isEmpty() and (hasPrevious or hasMore)}">
+    <a th:if="${hasPrevious}" th:href="@{/(page=${page - 1})}" class="btn btn-outline btn-sm">← Previous</a>
+    <span th:unless="${hasPrevious}"></span>
+    <a th:if="${hasMore}" th:href="@{/(page=${page + 1})}" class="btn btn-outline btn-sm">Next →</a>
+  </div>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>

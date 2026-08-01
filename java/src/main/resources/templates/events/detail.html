@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${event.title} + ' — Events'">Event — Events</title>
+  <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+
+<main class="container" style="max-width:640px">
+  <a th:href="@{/}" class="back-link">← All events</a>
+
+  <div class="event-detail-heading">
+    <h1 class="page-title" th:text="${event.title}">Event title</h1>
+    <span class="badge" th:classappend="${capacityBadge.badgeVariant}" th:text="${capacityBadge.badgeLabel}">0/0 booked</span>
+  </div>
+  <p class="muted">Hosted by <span th:text="${event.organizerName}">Organizer</span></p>
+
+  <ul class="event-meta-list">
+    <li>📅 <span th:text="${event.formattedStartsAt}">Date</span></li>
+    <li>📍 <span th:text="${event.location}">Location</span></li>
+    <li>👥 Capacity: <span th:text="${event.capacity}">0</span></li>
+  </ul>
+
+  <p class="event-description" th:if="${event.hasDescription}" th:text="${event.description}">Description</p>
+
+  <p th:if="${bookingMessage}" class="alert alert-success" style="margin-top:20px" th:text="${bookingMessage}">Booking message</p>
+
+  <div style="margin-top:20px" th:unless="${isOwner}">
+    <form th:if="${myBooking == null}" method="post" th:action="@{'/events/' + ${event.id} + '/book'}">
+      <button type="submit" class="btn btn-accent">Book this event</button>
+    </form>
+    <div class="btn-row" th:if="${myBooking != null}">
+      <span
+        class="badge"
+        th:classappend="${myBooking.status == 'waitlisted'} ? 'badge-warning' : (${myBooking.status == 'checked_in'} ? 'badge-secondary' : 'badge-success')"
+        th:text="${myBooking.status == 'confirmed'} ? 'You are booked' : (${myBooking.status == 'waitlisted'} ? 'You are on the waitlist' : 'You are checked in')">
+        Status
+      </span>
+      <a th:href="@{/bookings}" class="btn btn-outline btn-sm">View my bookings</a>
+    </div>
+  </div>
+
+  <div class="organizer-panel" th:if="${isOwner}">
+    <span class="organizer-label">Organizer</span>
+    <a th:href="@{'/events/' + ${event.id} + '/edit'}" class="btn btn-outline btn-sm">Edit</a>
+    <a th:href="@{'/events/' + ${event.id} + '/checkin'}" class="btn btn-outline btn-sm">Check-in</a>
+    <form method="post" th:action="@{'/events/' + ${event.id} + '/delete'}" onsubmit="return confirm('Delete this event permanently?')">
+      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+    </form>
+  </div>
+
+  <hr style="border:none;border-top:1px solid var(--color-border);margin:28px 0" />
+
+  <h2 style="font-size:1.05rem">Activity</h2>
+  <ul class="activity-list" th:if="${!activity.isEmpty()}">
+    <li class="activity-item" th:each="entry : ${activity}">
+      <p class="activity-text">
+        <strong th:text="${entry.actorName}">Someone</strong>
+        <span class="muted" th:text="${entry.description}">did something</span>
+      </p>
+      <p class="activity-time" th:text="${entry.formattedCreatedAt}">now</p>
+    </li>
+  </ul>
+  <p class="muted" th:if="${activity.isEmpty()}">No activity yet.</p>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+</body>
+</html>
