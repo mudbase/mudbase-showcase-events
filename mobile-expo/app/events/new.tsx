@@ -56,7 +56,7 @@ export default function NewEventScreen(): React.JSX.Element {
     <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
       <ScrollView contentContainerClassName="gap-4 p-4" keyboardShouldPersistTaps="handled">
         <Text className="text-xs text-muted-foreground">
-          Set a capacity — bookings beyond it are automatically waitlisted.
+          Set a capacity - bookings beyond it are automatically waitlisted.
         </Text>
         <EventForm
           onSubmit={handleSubmit}

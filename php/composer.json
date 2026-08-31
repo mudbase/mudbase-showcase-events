@@ -1,6 +1,6 @@
 {
     "name": "mudbase/showcase-events-php",
-    "description": "Mudbase Events — PHP reimplementation of the Mudbase showcase events booking/ticketing app. Plain PHP, no framework, backed entirely by the real Mudbase PHP SDK.",
+    "description": "Mudbase Events - PHP reimplementation of the Mudbase showcase events booking/ticketing app. Plain PHP, no framework, backed entirely by the real Mudbase PHP SDK.",
     "type": "project",
     "license": "unlicense",
     "require": {

@@ -6,7 +6,7 @@ export interface IconButtonProps extends PressableProps {
   className?: string;
 }
 
-/** A small square icon-only pressable — used for the compact sign-out control in AppHeader, where
+/** A small square icon-only pressable - used for the compact sign-out control in AppHeader, where
  * a full <Button> with a text label would not fit. Requires accessibilityLabel since there is no
  * visible text for a screen reader to read. */
 export function IconButton({

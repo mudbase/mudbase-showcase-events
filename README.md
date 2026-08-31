@@ -1,7 +1,7 @@
-# Mudbase Showcase — Events
+# Mudbase Showcase - Events
 
-An event booking/ticketing app built **entirely on [Mudbase](https://www.mudbase.dev)** — auth,
-database, and realtime — with **zero custom backend**. The same app, reimplemented once per
+An event booking/ticketing app built **entirely on [Mudbase](https://www.mudbase.dev)** - auth,
+database, and realtime - with **zero custom backend**. The same app, reimplemented once per
 official Mudbase SDK, so every supported language has a real, runnable reference app rather than
 a toy snippet.
 
@@ -25,7 +25,7 @@ activity log.
 | [`php/`](./php) | Server-rendered web app | PHP |
 | [`swift/`](./swift) | iOS app (SwiftUI) | Swift |
 
-Each directory is self-contained with its own README, dependency manifest, and `.env.example` —
+Each directory is self-contained with its own README, dependency manifest, and `.env.example` -
 clone this repo and only set up the language you care about.
 
 ## Prerequisite: clone the SDK repo as a sibling
@@ -43,15 +43,15 @@ some-folder/
 
 ## Data model & roles
 
-- **events** — `title`, `description?`, `startsAt` (date), `location`, `capacity`, `organizerId`,
+- **events** - `title`, `description?`, `startsAt` (date), `location`, `capacity`, `organizerId`,
   `organizerName`
-- **bookings** — `eventId`, `userId`, `userName`, `status` (`confirmed`/`waitlisted`/`cancelled`/
+- **bookings** - `eventId`, `userId`, `userName`, `status` (`confirmed`/`waitlisted`/`cancelled`/
   `checked_in`), `qrToken`
-- **activity** — `eventId`, `actorId`, `actorName`, `action`
+- **activity** - `eventId`, `actorId`, `actorName`, `action`
 
 Roles: **organizer** (full CRUD on events/bookings/activity), **attendee** (read events, manage
 own bookings, log activity). Auth, users, and realtime are all native Mudbase features.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT - see [LICENSE](./LICENSE).

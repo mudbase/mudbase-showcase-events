@@ -28,7 +28,7 @@ const RESULT_COPY: Record<CheckInOutcome, { icon: LucideIcon; tone: string; mess
   waitlisted: {
     icon: AlertTriangle,
     tone: "#b8790a",
-    message: (name) => `${name ?? "This guest"} is on the waitlist, not confirmed — cannot check in.`,
+    message: (name) => `${name ?? "This guest"} is on the waitlist, not confirmed - cannot check in.`,
   },
   cancelled: {
     icon: XCircle,

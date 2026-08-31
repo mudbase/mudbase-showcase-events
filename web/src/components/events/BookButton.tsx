@@ -66,7 +66,7 @@ export function BookButton({ event }: { event: EventDoc }): React.JSX.Element | 
       setFeedback(
         booking.status === "confirmed"
           ? "You're confirmed! See your ticket under My bookings."
-          : "This event is full — you've been added to the waitlist.",
+          : "This event is full - you've been added to the waitlist.",
       )
     } catch {
       setFeedback("Couldn't complete your booking. Please try again.")

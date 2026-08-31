@@ -14,7 +14,7 @@ const roleBadgeVariant: Record<"organizer" | "attendee", BadgeVariant> = {
  * A small per-screen header (title, current-user role badge, sign-out button) shown at the top
  * of each tab screen's content. Expo Router's native stack header does not carry per-role state
  * naturally and there is no meaningful mobile equivalent of the web reference's persistent app
- * shell across a bottom-tab layout, so this renders inline instead — mirrors the content of
+ * shell across a bottom-tab layout, so this renders inline instead - mirrors the content of
  * web/src/components/layout/Header.tsx.
  */
 export function AppHeader({ title }: { title: string }): React.JSX.Element {

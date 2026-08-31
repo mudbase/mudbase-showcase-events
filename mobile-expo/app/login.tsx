@@ -12,7 +12,7 @@ export default function LoginScreen(): React.JSX.Element {
           <Text className="text-muted-foreground">Sign in to book, manage, or check guests in.</Text>
         </View>
         {/* router.replace (not back()) since /login is reached by a redirect, not a user
-            navigation — there is nothing meaningful to go "back" to. */}
+            navigation - there is nothing meaningful to go "back" to. */}
         <LoginForm onSuccess={() => router.replace("/")} />
       </ScrollView>
     </SafeAreaView>

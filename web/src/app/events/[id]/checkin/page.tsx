@@ -30,7 +30,7 @@ export default function CheckInPage(): React.JSX.Element {
     <div className="container max-w-lg py-12">
       <Card>
         <CardHeader>
-          <CardTitle>Check in — {event.title}</CardTitle>
+          <CardTitle>Check in - {event.title}</CardTitle>
           <CardDescription>Paste or type the guest&apos;s scanned QR code to check them in.</CardDescription>
         </CardHeader>
         <CardContent>

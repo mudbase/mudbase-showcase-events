@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useEvents } from "@/hooks/useEvents";
 
 /**
- * The events tab's list content, page-button pagination rather than infinite scroll — mirrors
+ * The events tab's list content, page-button pagination rather than infinite scroll - mirrors
  * web/src/components/events/EventList.tsx's Previous/Next control exactly (this app's "no
  * drag-and-drop, use buttons/pickers" convention extends to pagination too: explicit Previous/Next
  * buttons, not a swipe gesture).

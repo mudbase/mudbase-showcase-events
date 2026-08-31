@@ -7,11 +7,11 @@ import "./globals.css"
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Mudbase Showcase — Events",
-    default: "Mudbase Showcase — Events",
+    template: "%s | Mudbase Showcase - Events",
+    default: "Mudbase Showcase - Events",
   },
   description:
-    "An event booking/ticketing platform built entirely on Mudbase — multi-role auth, capacity-aware booking, waitlisting, and QR check-in, with zero custom backend.",
+    "An event booking/ticketing platform built entirely on Mudbase - multi-role auth, capacity-aware booking, waitlisting, and QR check-in, with zero custom backend.",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }): React.JSX.Element {
@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
                 <a href="https://www.mudbase.dev" className="underline underline-offset-4" target="_blank" rel="noreferrer">
                   Mudbase
                 </a>{" "}
-                — no custom backend.
+                - no custom backend.
               </footer>
             </div>
           </MudbaseProvider>

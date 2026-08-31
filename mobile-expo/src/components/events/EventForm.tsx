@@ -51,7 +51,7 @@ interface EventFormProps {
  * Create/edit event form. React Native has no equivalent of the web reference's
  * `<input type="datetime-local">`, so date and time are picked with two separate native pickers
  * (`@react-native-community/datetimepicker`, mode="date" then mode="time") combined into one
- * `Date` — buttons + a native picker, per this port's "no drag-and-drop, use buttons/pickers"
+ * `Date` - buttons + a native picker, per this port's "no drag-and-drop, use buttons/pickers"
  * convention. Mirrors web/src/components/events/EventForm.tsx's validation and field set.
  */
 export function EventForm({

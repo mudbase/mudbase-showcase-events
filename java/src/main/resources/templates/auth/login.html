@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Sign in — Events</title>
+  <title>Sign in - Events</title>
   <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
 </head>
 <body>
@@ -10,7 +10,7 @@
 <main class="container" style="display:flex;justify-content:center">
   <div style="width:100%;max-width:420px">
     <h1 class="page-title" style="text-align:center">Sign in</h1>
-    <p class="lede" style="text-align:center">An event booking &amp; ticketing app built entirely on Mudbase — no custom backend at all.</p>
+    <p class="lede" style="text-align:center">An event booking &amp; ticketing app built entirely on Mudbase - no custom backend at all.</p>
 
     <p th:if="${errorMessage}" class="alert alert-notice" th:text="${errorMessage}">Notice</p>
     <p th:if="${authError}" class="alert alert-error" th:text="${authError}">Error</p>

@@ -54,7 +54,7 @@ export default function NewEventPage(): React.JSX.Element {
       <Card>
         <CardHeader>
           <CardTitle>New event</CardTitle>
-          <CardDescription>Set a capacity — bookings beyond it are automatically waitlisted.</CardDescription>
+          <CardDescription>Set a capacity - bookings beyond it are automatically waitlisted.</CardDescription>
         </CardHeader>
         <CardContent>
           <EventForm

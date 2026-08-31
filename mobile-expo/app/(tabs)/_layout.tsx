@@ -20,7 +20,7 @@ export default function TabsLayout(): React.JSX.Element | null {
   const { isAuthenticated, isInitializing } = useAuth();
   const router = useRouter();
 
-  // This app has no anonymous/guest read (see plan/build-plan.md) — every role, including
+  // This app has no anonymous/guest read (see plan/build-plan.md) - every role, including
   // attendee, must sign in before reaching the events or bookings tabs.
   useEffect(() => {
     if (!isInitializing && !isAuthenticated) {

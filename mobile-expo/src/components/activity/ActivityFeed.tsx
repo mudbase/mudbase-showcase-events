@@ -5,7 +5,7 @@ import { formatRelativeTime } from "@/lib/format";
 import { ACTIVITY_LABELS } from "@/api/schemas";
 
 /** Per-event activity feed. Demo scale (a handful of bookings/actions per event, capped at 50
- * server-side) — a plain `.map()`, matching web/src/components/activity/ActivityFeed.tsx's own
+ * server-side) - a plain `.map()`, matching web/src/components/activity/ActivityFeed.tsx's own
  * choice not to virtualize at this scale (see plan/build-plan.md). */
 export function ActivityFeed({ eventId }: { eventId: string }): React.JSX.Element {
   const { data, isLoading } = useEventActivity(eventId);

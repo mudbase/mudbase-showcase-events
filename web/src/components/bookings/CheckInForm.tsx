@@ -30,7 +30,7 @@ const RESULT_COPY: Record<CheckInResult["outcome"], { icon: React.ComponentType<
   waitlisted: {
     icon: AlertTriangle,
     tone: "text-warning",
-    message: (name) => `${name ?? "This guest"} is on the waitlist, not confirmed — cannot check in.`,
+    message: (name) => `${name ?? "This guest"} is on the waitlist, not confirmed - cannot check in.`,
   },
   cancelled: {
     icon: XCircle,

@@ -16,7 +16,7 @@ interface UseAuthReturn {
   clearError: () => void;
 }
 
-/** Thin selector hook over the auth store — screens read/act through this, never the store directly. */
+/** Thin selector hook over the auth store - screens read/act through this, never the store directly. */
 export function useAuth(): UseAuthReturn {
   const user = useAuthStore((s) => s.user);
   const isInitializing = useAuthStore((s) => s.isInitializing);

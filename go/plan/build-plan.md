@@ -1,4 +1,4 @@
-# Build Plan — Mudbase Showcase: Events (Go port)
+# Build Plan - Mudbase Showcase: Events (Go port)
 
 Generated: 2026-08-01
 Mode: port (Go server-rendered reimplementation of the already-built, live-tested Next.js
@@ -6,7 +6,7 @@ reference at `../web`, which remains the source of truth for the data model, RBA
 capacity/waitlist-promotion algorithm).
 Type: web (server-rendered, fullstack via BaaS, no custom backend)
 Stack: Go 1.26 + `net/http` + `chi/v5` + `html/template` + `gorilla/sessions`, backed entirely by
-Mudbase (cloud.mudbase.dev) — mirrors `mudbase-showcase-social/go` and `mudbase-showcase-kanban/go`
+Mudbase (cloud.mudbase.dev) - mirrors `mudbase-showcase-social/go` and `mudbase-showcase-kanban/go`
 architecture: `internal/mbase`, `internal/models`, `internal/store`, `internal/rbac`,
 `internal/server`.
 
@@ -14,7 +14,7 @@ architecture: `internal/mbase`, `internal/models`, `internal/store`, `internal/r
 
 - `net/http` + `chi/v5` + `html/template` + `gorilla/sessions`: matches the sibling Go showcase
   ports exactly, per this task's explicit instruction to mirror their architecture.
-- `internal/mbase` ports the kanban/social showcases' client verbatim — 401 → refresh → retry
+- `internal/mbase` ports the kanban/social showcases' client verbatim - 401 → refresh → retry
   wired through request context (`WithTokenRefresher`) and into every
   `mbase.List/Get/Create/Update/Delete` call, so no handler can forget it. The only functional
   addition versus kanban's `mbase` package: a `Register` method (`MultiRoleFeatureAPI.RegisterWithRole`)
@@ -23,10 +23,10 @@ architecture: `internal/mbase`, `internal/models`, `internal/store`, `internal/r
   provisioning.
 - No custom backend of any kind: every persistence and auth concern is a Mudbase REST call made
   through the official Go SDK. The Mudbase JWT lives only in an encrypted, httpOnly session cookie
-  (`internal/session`) — there is no client-side JavaScript in this port at all, so there is no
+  (`internal/session`) - there is no client-side JavaScript in this port at all, so there is no
   other place a token could live.
 - QR codes: `github.com/skip2/go-qrcode`, rendered server-side to a PNG and inlined as a base64
-  `data:` URI (`internal/server/format.go`'s `qrDataURI`) — the server-rendered equivalent of the
+  `data:` URI (`internal/server/format.go`'s `qrDataURI`) - the server-rendered equivalent of the
   reference web app's `<QRCodeSVG>` (`qrcode.react`). Needs no client-side library and no extra
   round-trip.
 - Zero client-side JavaScript: unlike the sibling kanban port (which polls two small `<script>`
@@ -36,15 +36,15 @@ architecture: `internal/mbase`, `internal/models`, `internal/store`, `internal/r
 ## Real, Already-Provisioned Mudbase Project (used as-is, not recreated)
 
 - Base URL `https://cloud.mudbase.dev`, project ID `6a6d3fa9d07caabbbdfc564f`.
-- `events` — `6a6d3fcad07caabbbdfc5802` — `title`, `description?`, `startsAt`, `location`,
+- `events` - `6a6d3fcad07caabbbdfc5802` - `title`, `description?`, `startsAt`, `location`,
   `capacity`, `organizerId`, `organizerName`.
-- `bookings` — `6a6d3fcbd07caabbbdfc5819` — `eventId`, `userId`, `userName`, `status`
+- `bookings` - `6a6d3fcbd07caabbbdfc5819` - `eventId`, `userId`, `userName`, `status`
   (`confirmed`/`waitlisted`/`cancelled`/`checked_in`), `qrToken`.
-- `activity` — `6a6d3fccd07caabbbdfc582e` — `eventId`, `actorId`, `actorName`, `action`.
+- `activity` - `6a6d3fccd07caabbbdfc582e` - `eventId`, `actorId`, `actorName`, `action`.
 - Roles: `organizer` (full CRUD on all three collections), `attendee` (read events; create/read/
   update own bookings; create/read activity). Signup slugs are exactly `organizer` and `attendee`.
 - Two pre-verified shared test accounts: `events.organizer.demo@gmail.com` /
-  `events.attendee.demo@gmail.com`, password `DemoTest123!` — used directly, no new registrations
+  `events.attendee.demo@gmail.com`, password `DemoTest123!` - used directly, no new registrations
   against the shared, rate-limited signup endpoint.
 
 ## Data Models (Go)
@@ -79,17 +79,17 @@ type Activity struct {
 ```
 
 Every `...Id`/`...ID` field is always populated from a real Mudbase-issued 24-hex ObjectId (the
-signed-in user's session ID, or another document's real `_id`) — never a client-invented string —
+signed-in user's session ID, or another document's real `_id`) - never a client-invented string -
 per the platform's query-sanitizer requirement (confirmed by the sibling ports; see "Known
 platform facts" in the task brief).
 
 ## RBAC Matrix
 
-See README.md "RBAC matrix" — identical content, reproduced there to keep the top-level doc
+See README.md "RBAC matrix" - identical content, reproduced there to keep the top-level doc
 self-contained for a reader who doesn't open this file.
 
 Server-side enforcement is the actual security boundary (Mudbase collection permissions,
-role-level not per-document — any organizer account may CRUD any event); this app's own
+role-level not per-document - any organizer account may CRUD any event); this app's own
 `internal/rbac` package and `organizerId === session.user.id` template checks are UX gating so the
 right people see the right buttons, matching the pattern established in every sibling showcase
 port and in the reference web app itself (see `../web/plan/build-plan.md` "RBAC Matrix").
@@ -121,7 +121,7 @@ only with no public role configured, so an unauthenticated visitor is redirected
 
 ## Capacity-Race Handling Approach
 
-See README.md "Capacity-race handling" for the full narrative — ported algorithmically from the
+See README.md "Capacity-race handling" for the full narrative - ported algorithmically from the
 reference web app's `src/lib/capacity.ts` (`reconcileEventCapacity`) and `src/hooks/useBookings.ts`
 (`useCreateBooking`/`useCancelBooking`), with the exact same two-phase decide-then-reconcile
 approach:
@@ -159,20 +159,20 @@ attendee name are never lost to a round-trip.
 
 ## UI Pages
 
-- `/` — event list, auth-gated (`requireSignedIn`): paginated (`sort=startsAt`, page/limit=10),
+- `/` - event list, auth-gated (`requireSignedIn`): paginated (`sort=startsAt`, page/limit=10),
   each card shows title/date/location + a live confirmed-vs-capacity indicator. Organizers see a
   "New event" call to action.
-- `/events/new` — organizer-only create form (title, description, startsAt, location, capacity).
-- `/events/{id}` — full detail: info, confirmed/capacity indicator, Book button for the current
+- `/events/new` - organizer-only create form (title, description, startsAt, location, capacity).
+- `/events/{id}` - full detail: info, confirmed/capacity indicator, Book button for the current
   user if they are not that event's organizer and have no active booking, organizer-only
   Edit/Check-in/Delete affordances when `organizerId === session.user.id`, and the
   reverse-chronological activity feed for the event.
-- `/events/{id}/edit` — organizer-only edit form.
-- `/events/{id}/checkin` — organizer-only manual QR-token check-in.
-- `/bookings` — the signed-in visitor's own bookings across all events, each rendered with a
+- `/events/{id}/edit` - organizer-only edit form.
+- `/events/{id}/checkin` - organizer-only manual QR-token check-in.
+- `/bookings` - the signed-in visitor's own bookings across all events, each rendered with a
   server-generated QR PNG of its `qrToken` and a Cancel action (confirmed/waitlisted only).
-- `/login` — shared-account sign-in (also used for any newly registered account).
-- `/register` — nice-to-have signup with an organizer/attendee role selector.
+- `/login` - shared-account sign-in (also used for any newly registered account).
+- `/register` - nice-to-have signup with an organizer/attendee role selector.
 
 ## Security Implementation
 
@@ -217,29 +217,29 @@ attendee name are never lost to a round-trip.
 | Attendee `GET /events/new` (app middleware, organizer-only) | `303` redirect to `/` with "Only organizers can do that." - blocked before touching Mudbase |
 | Organizer creates event via the app (capacity 2) | `303` → `/events/{id}` |
 | Attendee views event detail, capacity shows `0 / 2 confirmed` | ok |
-| **Booking #1** — attendee books via the app (0 confirmed so far) | decided `confirmed`, `booking_confirmed` logged |
-| **Booking #2** — second app booking (1 confirmed so far) | decided `confirmed` (fills capacity), `booking_confirmed` logged |
-| **Booking #3** — third app booking (2 confirmed, at capacity) | decided `waitlisted`, `booking_waitlisted` logged - capacity enforcement confirmed correct |
-| **Cancellation** — attendee cancels booking #2 (a confirmed seat) via the app | `booking_cancelled` logged, reconciliation ran |
-| Event capacity after cancellation | `2 / 2 confirmed` — booking #3 was promoted into the freed seat |
-| Activity feed order after cancellation (`sort=-createdAt`) | `booking_promoted` → `booking_cancelled` → `booking_waitlisted` → `booking_confirmed` → `booking_confirmed` → `event_created` — exactly correct |
-| **Check-in** — organizer checks in booking #1 by pasted `qrToken` | `200`, success flash "Aria Attendee checked in.", `checked_in` logged |
+| **Booking #1** - attendee books via the app (0 confirmed so far) | decided `confirmed`, `booking_confirmed` logged |
+| **Booking #2** - second app booking (1 confirmed so far) | decided `confirmed` (fills capacity), `booking_confirmed` logged |
+| **Booking #3** - third app booking (2 confirmed, at capacity) | decided `waitlisted`, `booking_waitlisted` logged - capacity enforcement confirmed correct |
+| **Cancellation** - attendee cancels booking #2 (a confirmed seat) via the app | `booking_cancelled` logged, reconciliation ran |
+| Event capacity after cancellation | `2 / 2 confirmed` - booking #3 was promoted into the freed seat |
+| Activity feed order after cancellation (`sort=-createdAt`) | `booking_promoted` → `booking_cancelled` → `booking_waitlisted` → `booking_confirmed` → `booking_confirmed` → `event_created` - exactly correct |
+| **Check-in** - organizer checks in booking #1 by pasted `qrToken` | `200`, success flash "Aria Attendee checked in.", `checked_in` logged |
 | Re-check-in the same booking (idempotency) | `200`, error flash "Aria Attendee is already checked in.", no mutation |
 | Check in a **waitlisted** booking's `qrToken` | rejected: "This booking is waitlisted, not confirmed - it can't be checked in yet.", no mutation (verified unchanged afterward) |
 | Check in a **cancelled** booking's `qrToken` | rejected: "This booking was cancelled.", no mutation |
 | Check in a bogus/unknown `qrToken` | rejected: "No booking found for that check-in code." |
 | Attendee `GET /events/{id}/checkin` (app middleware, organizer-only) | `303` redirect to `/` with "Only organizers can do that." |
-| **RAW CURL, bypassing the app entirely** — fresh attendee JWT attempts `POST` (create) on `events` | `403 Insufficient permissions`, `{"required":{"action":"create","collection":"events"},"customRole":"attendee"}` |
-| **RAW CURL** — same attendee JWT attempts `PATCH` (update) on the just-created event | `403 Insufficient permissions`, `action: "update"` |
-| **RAW CURL** — same attendee JWT attempts `DELETE` on the event | `403 Insufficient permissions`, `action: "delete"` |
-| **RAW CURL sanity check** — same attendee JWT reads the event (`GET`) | `200` — confirms the 403s above are role/action-specific, not a broken token |
-| Cleanup — organizer deletes the test event via the app | `303` → `/`, subsequent `GET /events/{id}` redirects with "That event couldn't be found." |
+| **RAW CURL, bypassing the app entirely** - fresh attendee JWT attempts `POST` (create) on `events` | `403 Insufficient permissions`, `{"required":{"action":"create","collection":"events"},"customRole":"attendee"}` |
+| **RAW CURL** - same attendee JWT attempts `PATCH` (update) on the just-created event | `403 Insufficient permissions`, `action: "update"` |
+| **RAW CURL** - same attendee JWT attempts `DELETE` on the event | `403 Insufficient permissions`, `action: "delete"` |
+| **RAW CURL sanity check** - same attendee JWT reads the event (`GET`) | `200` - confirms the 403s above are role/action-specific, not a broken token |
+| Cleanup - organizer deletes the test event via the app | `303` → `/`, subsequent `GET /events/{id}` redirects with "That event couldn't be found." |
 
-**Net result**: the entire app-to-Mudbase contract — two-role auth with session cookies, capacity-
+**Net result**: the entire app-to-Mudbase contract - two-role auth with session cookies, capacity-
 checked booking (confirmed vs. waitlisted), cancellation-triggered waitlist promotion, idempotent
 QR-token check-in with every rejection branch (waitlisted/cancelled/not-found), and organizer-only
 writes rejected server-side by Mudbase's own collection permissions independent of this app's own
-route middleware — is proven correct against the real, live backend, both through the app's own
+route middleware - is proven correct against the real, live backend, both through the app's own
 HTTP surface and via a raw `curl` request carrying a fresh attendee JWT that never touches this
 app's code at all.
 

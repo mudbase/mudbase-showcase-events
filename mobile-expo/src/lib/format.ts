@@ -23,7 +23,7 @@ export function formatDateTime(iso: string): string {
  * A random, unguessable single-use check-in code. Not a security credential in the cryptographic
  * sense (this is a demo ticketing app, not a payments system) - collision resistance against
  * `crypto.randomUUID()`'s 122 bits of entropy is more than sufficient for a QR check-in token.
- * `expo-crypto`'s `randomUUID` is not needed here — the Hermes/JSC runtime under the New
+ * `expo-crypto`'s `randomUUID` is not needed here - the Hermes/JSC runtime under the New
  * Architecture already exposes a spec-compliant `crypto.randomUUID()` global.
  */
 export function generateQrToken(): string {

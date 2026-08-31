@@ -29,7 +29,7 @@
     </a>
   </div>
 
-  <p class="empty-state" th:if="${rows.isEmpty()}">No events yet<span th:if="${isOrganizer}"> — create the first one.</span></p>
+  <p class="empty-state" th:if="${rows.isEmpty()}">No events yet<span th:if="${isOrganizer}"> - create the first one.</span></p>
 
   <div class="pagination" th:if="${!rows.isEmpty() and (hasPrevious or hasMore)}">
     <a th:if="${hasPrevious}" th:href="@{/(page=${page - 1})}" class="btn btn-outline btn-sm">← Previous</a>

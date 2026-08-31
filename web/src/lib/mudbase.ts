@@ -12,7 +12,7 @@ export interface RegisterParams {
   password: string
   firstName: string
   lastName: string
-  /** Required by Mudbase's registration validator — a direct API call without it is rejected. */
+  /** Required by Mudbase's registration validator - a direct API call without it is rejected. */
   agreedToTerms: boolean
 }
 
@@ -41,7 +41,7 @@ export interface UserObject {
   firstName: string
   lastName: string
   role?: string
-  /** The app-defined role slug — "organizer" or "attendee" for this project. */
+  /** The app-defined role slug - "organizer" or "attendee" for this project. */
   customRole?: string | null
   emailVerified: boolean
   isAnonymous?: boolean

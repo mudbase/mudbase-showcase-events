@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title th:text="'Check in — ' + ${event.title}">Check in — Events</title>
+  <title th:text="'Check in - ' + ${event.title}">Check in - Events</title>
   <th:block th:replace="~{fragments/layout :: head-assets}"></th:block>
 </head>
 <body>
@@ -11,7 +11,7 @@
   <a th:href="@{'/events/' + ${event.id}}" class="back-link">← Back to event</a>
 
   <div class="form-card">
-    <h1 class="page-title" th:text="'Check in — ' + ${event.title}">Check in</h1>
+    <h1 class="page-title" th:text="'Check in - ' + ${event.title}">Check in</h1>
     <p class="lede">Paste or type the guest's scanned QR code to check them in.</p>
 
     <form method="post" th:action="@{'/events/' + ${event.id} + '/checkin'}" th:object="${checkInRequest}" class="btn-row" style="align-items:flex-start" novalidate>
@@ -30,7 +30,7 @@
       ⚠️ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'This guest')} + ' was already checked in.'">Already checked in.</span>
     </div>
     <div class="checkin-result checkin-result-warning" th:if="${checkInOutcome == 'WAITLISTED'}">
-      ⚠️ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'This guest')} + ' is on the waitlist, not confirmed — cannot check in.'">Waitlisted.</span>
+      ⚠️ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'This guest')} + ' is on the waitlist, not confirmed - cannot check in.'">Waitlisted.</span>
     </div>
     <div class="checkin-result checkin-result-error" th:if="${checkInOutcome == 'CANCELLED'}">
       ✕ <span th:text="${(checkInGuestName != null ? checkInGuestName : 'This booking')} + ' was cancelled.'">Cancelled.</span>

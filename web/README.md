@@ -1,10 +1,10 @@
-# Mudbase Showcase — Events (Web)
+# Mudbase Showcase - Events (Web)
 
-An event booking/ticketing platform built **entirely on [Mudbase](https://www.mudbase.dev)** —
-auth, database, and multi-role RBAC — with **zero custom backend**. Next.js 15 (App Router),
+An event booking/ticketing platform built **entirely on [Mudbase](https://www.mudbase.dev)** -
+auth, database, and multi-role RBAC - with **zero custom backend**. Next.js 15 (App Router),
 TypeScript strict, Tailwind CSS, shadcn/ui-style components, TanStack Query, react-hook-form + zod.
 
-This is the reference implementation for the `mudbase-showcase-events` monorepo — see the root
+This is the reference implementation for the `mudbase-showcase-events` monorepo - see the root
 [`README.md`](../README.md) for the other 9 language/platform ports.
 
 ## Features
@@ -41,14 +41,14 @@ Two pre-verified accounts are already provisioned on the shared Mudbase project 
 
 ## Scripts
 
-- `npm run dev` — start the dev server
-- `npm run build` — production build
-- `npm run start` — run the production build
-- `npm run lint` — ESLint
+- `npm run dev` - start the dev server
+- `npm run build` - production build
+- `npm run start` - run the production build
+- `npm run lint` - ESLint
 
 ## Environment Variables
 
-See `.env.example`. Every variable is `NEXT_PUBLIC_*` — there is no server-side secret anywhere in
+See `.env.example`. Every variable is `NEXT_PUBLIC_*` - there is no server-side secret anywhere in
 this app (no Route Handlers, no server actions that touch a database).
 
 ## Architecture
@@ -58,4 +58,4 @@ and capacity-race handling approach.
 
 ## License
 
-MIT — see the repository root [LICENSE](../LICENSE).
+MIT - see the repository root [LICENSE](../LICENSE).

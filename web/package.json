@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Event booking/ticketing platform built entirely on Mudbase — Next.js 15 reference implementation.",
+  "description": "Event booking/ticketing platform built entirely on Mudbase - Next.js 15 reference implementation.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

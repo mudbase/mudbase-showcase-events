@@ -7,7 +7,7 @@
         <h1>{{ "Edit event" if event else "New event" }}</h1>
         <p class="muted text-sm" style="margin-bottom: 1.25rem;">
           {% if event %}Changes to capacity are re-checked against existing bookings.
-          {% else %}Set a capacity — bookings beyond it are automatically waitlisted.{% endif %}
+          {% else %}Set a capacity - bookings beyond it are automatically waitlisted.{% endif %}
         </p>
 
         {% if form_error %}<div class="form-error" role="alert">{{ form_error }}</div>{% endif %}

@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { cn } from "@/lib/cn";
 
-/** Extends the sibling kanban port's Badge with "success"/"warning" variants — this app's
+/** Extends the sibling kanban port's Badge with "success"/"warning" variants - this app's
  * CapacityBadge/BookingCard status pills need all five, mirroring web/src/components/ui/badge.tsx. */
 export type BadgeVariant = "default" | "secondary" | "outline" | "success" | "warning" | "destructive";
 

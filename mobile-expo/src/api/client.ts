@@ -6,23 +6,23 @@ import { secureStorage, STORAGE_KEYS } from "./secureStorage";
 import { authResultSchema, mudbaseUserSchema, type AuthResult, type MudbaseUser } from "./schemas";
 
 /**
- * Thin, typed wrapper around the real generated `mudbase-sdk` — same mechanism
+ * Thin, typed wrapper around the real generated `mudbase-sdk` - same mechanism
  * the sibling `mudbase-showcase-kanban/mobile-expo` port uses: real generated
  * `*Api` class instances (`AuthenticationApi`/`DataApi`), not a unified client
  * the SDK doesn't ship. Every generated method takes a single
  * `requestParameters` object (e.g. `loginLocalUser({ loginLocalUserRequest: {...} })`),
- * NOT positional arguments — calling positionally throws a client-side
+ * NOT positional arguments - calling positionally throws a client-side
  * `RequiredError` before any request reaches the network.
  *
- * Like the kanban port, this app has **no anonymous-session method at all** —
+ * Like the kanban port, this app has **no anonymous-session method at all** -
  * every one of this project's collections requires a real authenticated JWT
  * for both roles, including the read-only-ish attendee (see
- * plan/build-plan.md "Auth Flow"), and it has no file-upload method — this
+ * plan/build-plan.md "Auth Flow"), and it has no file-upload method - this
  * data model has no image field anywhere.
  *
  * This file adds on top of the generated SDK: token storage (SecureStore,
  * never AsyncStorage), a single-retry-on-401 refresh with in-flight dedupe
- * (ported from web/src/lib/mudbase.ts's `refreshInFlight` pattern — refresh
+ * (ported from web/src/lib/mudbase.ts's `refreshInFlight` pattern - refresh
  * tokens rotate on every use and a reused one revokes the whole session, so
  * concurrent 401s must share one refresh call, never race), and
  * zod-validated narrowing of the generated response types where they
@@ -122,14 +122,14 @@ class MudbaseClient {
 
   /**
    * Refresh tokens rotate on every use and a reused one revokes the session
-   * (platform reuse-detection) — this in-flight promise is shared across
+   * (platform reuse-detection) - this in-flight promise is shared across
    * concurrent 401s to guarantee at most one refresh call per expiry, never a
    * stampede that would trip reuse-detection itself. Faithful port of
    * web/src/lib/mudbase.ts's `refreshAccessToken()` / `refreshInFlight`.
    */
   private async refreshSession(): Promise<void> {
     if (!this.refreshTokenValue) {
-      throw new MudbaseApiError("No refresh token available — sign in again.", 401);
+      throw new MudbaseApiError("No refresh token available - sign in again.", 401);
     }
     if (!this.refreshing) {
       this.refreshing = (async (): Promise<void> => {
@@ -192,15 +192,15 @@ class MudbaseClient {
     try {
       await this.authApi.logoutLocalUser();
     } catch {
-      // Best-effort server-side revoke — always clear local tokens regardless.
+      // Best-effort server-side revoke - always clear local tokens regardless.
     } finally {
       await this.clearTokens();
     }
   }
 
-  /** Returns null (rather than throwing) when there is no session — the caller (authStore) treats
+  /** Returns null (rather than throwing) when there is no session - the caller (authStore) treats
    * that identically to "never logged in" and routes to /login. Never falls back to an anonymous
-   * session — this app has none (see plan/build-plan.md). */
+   * session - this app has none (see plan/build-plan.md). */
   async getSession(): Promise<MudbaseUser | null> {
     if (!this.token) return null;
     try {

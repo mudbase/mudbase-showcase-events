@@ -6,7 +6,7 @@ import { z } from "zod";
  * The generated `mudbase-sdk`'s auth response models (e.g.
  * `LoginLocalUser200ResponseUser`) omit `customRole` even though the live API
  * includes it on every project-scoped session response (this app's entire
- * RBAC gating depends on it) — the same gap the sibling
+ * RBAC gating depends on it) - the same gap the sibling
  * `mudbase-showcase-kanban/mobile-expo` port's `schemas.ts` documents against
  * the same generated SDK. Likewise `DataResponse`/`DataListResponse` type
  * their `data` field as bare `object`. Rather than casting past the generated
@@ -17,7 +17,7 @@ import { z } from "zod";
 
 // ─── Auth / User ────────────────────────────────────────────────────────────
 
-/** Role slugs this project's multi-role auth is configured with — see plan/build-plan.md. */
+/** Role slugs this project's multi-role auth is configured with - see plan/build-plan.md. */
 export const appRoleSchema = z.enum(["organizer", "attendee"]);
 export type AppRole = z.infer<typeof appRoleSchema>;
 
